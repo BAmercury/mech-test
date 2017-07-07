@@ -32,24 +32,44 @@ namespace Mechanica
 
         public const ArduinoModel Arduino = ArduinoModel.UnoR3;
 
-        public string desired_distance;
 
+        //desired distance LA should travel too
+        public int desired_distance;
+
+        public int la_rest = 7;
+
+
+        //Arduino Pin Setup for LA
         private const int EnablePin = 8;
         private const int PWMPin = 11;
         private const int PWMPin2 = 3;
 
+
+        //Analog In Pin for Loadcell sensor
         private const int loadcell_pin = 0;
 
-        public string loadcell_data;
 
+        //Dump int for incoming load cell sensor data
+        public int loadcell_data;
+
+
+        //Analog in Pin for LVDT sensor
         private const int lvdt_pin = 1;
-        public string lvdt_data;
 
+        //Dump int for incoming lvdt sensor data
+        public int lvdt_data;
+
+
+        //control system bools
+        public bool move_bool = false;
+        public bool retract_bool = false;
 
 
         private void begin_test_btn_Click(object sender, RoutedEventArgs e)
         {
+            Int32.TryParse(input_distance_txt.Text, out desired_distance);
 
+            move_bool = true;
 
             Thread oThread = new Thread(new ThreadStart(data_extract));
             oThread.Start();
@@ -60,7 +80,7 @@ namespace Mechanica
         private void data_extract()
         {
 
-            using (var driver = new ArduinoDriver.ArduinoDriver(Arduino, false))
+            using (var driver = new ArduinoDriver.ArduinoDriver(Arduino, true))
             {
                 driver.Send(new PinModeRequest(EnablePin, PinMode.Output));
                 driver.Send(new PinModeRequest(PWMPin, PinMode.Output));
@@ -77,10 +97,63 @@ namespace Mechanica
                     append_loadcell_box(loadcell_recieve.PinValue.ToString());
 
 
-                    var lvdt_recieve = driver.Send(new AnalogReadRequest(1));
-                    append_lvdt_box(lvdt_recieve.PinValue.ToString());
+                    
 
-                    Thread.Sleep(1000);
+                    //Move to distance loop
+                    if (move_bool == true)
+                    {
+
+                        retract_bool = false;
+
+                        var lvdt_recieve = driver.Send(new AnalogReadRequest(1));
+                        append_lvdt_box(lvdt_recieve.PinValue.ToString());
+
+
+                        if (desired_distance > lvdt_recieve.PinValue)
+                        {
+                            driver.Send(new DigitalWriteRequest(EnablePin, DigitalValue.High));
+                            driver.Send(new AnalogWriteRequest(PWMPin2, 0));
+                            driver.Send(new AnalogWriteRequest(PWMPin, 255));
+                            move_bool = true;
+                            lvdt_recieve = driver.Send(new AnalogReadRequest(1));
+                        }
+                        else if (desired_distance <= lvdt_recieve.PinValue)
+                        {
+                            move_bool = false;
+                        }
+                    }
+                    else
+                    {
+                        retract_bool = true;
+                    }
+
+
+                    //Retract distance loop
+                    if (retract_bool == true)
+                    {
+                        move_bool = false;
+                        var lvdt_recieve = driver.Send(new AnalogReadRequest(1));
+                        append_lvdt_box(lvdt_recieve.PinValue.ToString());
+                        if (la_rest <= lvdt_recieve.PinValue)
+                        {
+
+                            driver.Send(new DigitalWriteRequest(EnablePin, DigitalValue.High));
+                            driver.Send(new AnalogWriteRequest(PWMPin2, 255));
+                            driver.Send(new AnalogWriteRequest(PWMPin, 0));
+
+                             lvdt_recieve = driver.Send(new AnalogReadRequest(1));
+
+
+                        }
+                        else if (la_rest >= lvdt_recieve.PinValue)
+                        {
+                            //Thread.CurrentThread.Abort();
+                        }
+                        driver.Dispose();
+                        Thread.CurrentThread.Abort();
+                    }
+
+                    //Thread.Sleep(1000);
 
                 }
             }

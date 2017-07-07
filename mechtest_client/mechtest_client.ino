@@ -45,8 +45,8 @@ void loop() {
 
   get_lvdt_data();
 
-  move_to_distance();
-  retract();
+  //move_to_distance();
+  //retract();
   
 }
 
