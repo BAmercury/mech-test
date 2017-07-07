@@ -13,5 +13,11 @@ namespace Mechanica
     /// </summary>
     public partial class App : Application
     {
+
+
+
     }
+
+
+
 }
