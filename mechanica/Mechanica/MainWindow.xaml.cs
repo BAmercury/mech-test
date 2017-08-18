@@ -65,10 +65,6 @@ namespace Mechanica
         public bool retract_bool = false;
 
 
-        //manual control bools
-        public bool enable_mc = false;
-        public bool up_control = false;
-        public bool down_control = false;
 
 
         private void begin_test_btn_Click(object sender, RoutedEventArgs e)
@@ -205,12 +201,12 @@ namespace Mechanica
             loadcell_data_lbl.Visibility = Visibility.Hidden;
 
 
-            up_control_btn.Visibility = Visibility.Visible;
-            down_control_btn.Visibility = Visibility.Visible;
+            //up_control_btn.Visibility = Visibility.Visible;
+            //down_control_btn.Visibility = Visibility.Visible;
 
             enable_mc = true;
 
-            Thread oThread = new Thread(new ThreadStart(manual_cotnrol));
+            Thread oThread = new Thread(new ThreadStart(manual_control));
             oThread.Start();
 
 
