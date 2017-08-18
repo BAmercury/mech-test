@@ -65,9 +65,15 @@ namespace Mechanica
         public bool retract_bool = false;
 
 
+        //manual control bools
+        public bool enable_mc = false;
+        public bool up_control = false;
+        public bool down_control = false;
+
+
         private void begin_test_btn_Click(object sender, RoutedEventArgs e)
         {
-            Int32.TryParse(input_distance_txt.Text, out desired_distance);
+            Int32.TryParse(input_distance_inp.Text, out desired_distance);
 
             move_bool = true;
 
@@ -76,7 +82,9 @@ namespace Mechanica
 
 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         private void data_extract()
         {
 
@@ -86,6 +94,8 @@ namespace Mechanica
                 driver.Send(new PinModeRequest(PWMPin, PinMode.Output));
                 driver.Send(new PinModeRequest(PWMPin2, PinMode.Output));
 
+
+                //While Loop for move to distance control system
                 while (true)
                 {
 
@@ -142,6 +152,7 @@ namespace Mechanica
                             driver.Send(new AnalogWriteRequest(PWMPin, 0));
 
                              lvdt_recieve = driver.Send(new AnalogReadRequest(1));
+                            append_lvdt_box(lvdt_recieve.PinValue.ToString());
 
 
                         }
@@ -183,6 +194,31 @@ namespace Mechanica
             lvdt_data_rd.Text = value;
         }
 
-      
+        private void manual_ctrl_btn_Click(object sender, RoutedEventArgs e)
+        {
+            input_distance_inp.Visibility = Visibility.Hidden;
+            input_distance_lbl.Visibility = Visibility.Hidden;
+            begin_test_btn.Visibility = Visibility.Hidden;
+            lvdt_data_rd.Visibility = Visibility.Hidden;
+            lvdt_data_lbl.Visibility = Visibility.Hidden;
+            loadcell_data_rd.Visibility = Visibility.Hidden;
+            loadcell_data_lbl.Visibility = Visibility.Hidden;
+
+
+            up_control_btn.Visibility = Visibility.Visible;
+            down_control_btn.Visibility = Visibility.Visible;
+
+            enable_mc = true;
+
+            Thread oThread = new Thread(new ThreadStart(manual_cotnrol));
+            oThread.Start();
+
+
+
+
+
+        }
+
+
     }
 }
