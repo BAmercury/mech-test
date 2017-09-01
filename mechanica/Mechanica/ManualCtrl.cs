@@ -37,6 +37,12 @@ namespace Mechanica
                 //While Loop for move to distance control system
                 while (true)
                 {
+                    var loadcell_recieve = driver.Send(new AnalogReadRequest(0));
+                    append_loadcell_box(loadcell_recieve.PinValue.ToString());
+
+
+                    var lvdt_recieve = driver.Send(new AnalogReadRequest(1));
+                    append_lvdt_box(lvdt_recieve.PinValue.ToString());
 
                     if (up_control == 1)
                     {
@@ -50,6 +56,15 @@ namespace Mechanica
                         driver.Send(new AnalogWriteRequest(PWMPin2, 255));
                         driver.Send(new AnalogWriteRequest(PWMPin, 0));
                     }
+                    else if (up_control == 0 && down_control == 0)
+                    {
+                        driver.Send(new DigitalWriteRequest(EnablePin, DigitalValue.Low));
+                        driver.Send(new AnalogWriteRequest(PWMPin2, 255));
+                        driver.Send(new AnalogWriteRequest(PWMPin, 0));
+                    }
+                    
+
+                    
                     //driver.Send(new DigitalWriteRequest(EnablePin, DigitalValue.High));
                     //driver.Send(new AnalogWriteRequest(PWMPin2, 0));
                     //driver.Send(new AnalogWriteRequest(PWMPin, 255));

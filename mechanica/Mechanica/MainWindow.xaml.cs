@@ -155,6 +155,8 @@ namespace Mechanica
                         else if (la_rest >= lvdt_recieve.PinValue)
                         {
                             //Thread.CurrentThread.Abort();
+                            lvdt_recieve = driver.Send(new AnalogReadRequest(1));
+                            append_lvdt_box(lvdt_recieve.PinValue.ToString());
                         }
                         driver.Dispose();
                         Thread.CurrentThread.Abort();
@@ -195,10 +197,10 @@ namespace Mechanica
             input_distance_inp.Visibility = Visibility.Hidden;
             input_distance_lbl.Visibility = Visibility.Hidden;
             begin_test_btn.Visibility = Visibility.Hidden;
-            lvdt_data_rd.Visibility = Visibility.Hidden;
-            lvdt_data_lbl.Visibility = Visibility.Hidden;
-            loadcell_data_rd.Visibility = Visibility.Hidden;
-            loadcell_data_lbl.Visibility = Visibility.Hidden;
+            //lvdt_data_rd.Visibility = Visibility.Hidden;
+            //lvdt_data_lbl.Visibility = Visibility.Hidden;
+            //loadcell_data_rd.Visibility = Visibility.Hidden;
+            //loadcell_data_lbl.Visibility = Visibility.Hidden;
 
 
             //up_control_btn.Visibility = Visibility.Visible;
