@@ -102,7 +102,7 @@ namespace Mechanica
                     var loadcell_recieve = driver.Send(new AnalogReadRequest(0));
                     append_loadcell_box(loadcell_recieve.PinValue.ToString());
 
-
+                    //comment
                     
 
                     //Move to distance loop
