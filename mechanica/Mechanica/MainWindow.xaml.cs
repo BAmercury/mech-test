@@ -79,7 +79,7 @@ namespace Mechanica
 
         }
         /// <summary>
-        /// 
+        /// Move to distance control schema and collects data
         /// </summary>
         private void data_extract()
         {
