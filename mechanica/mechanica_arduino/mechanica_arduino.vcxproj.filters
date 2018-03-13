@@ -16,6 +16,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="mechanica_arduino.ino" />
+    <None Include="mechanica_arduino.ino.standard.hex" />
+    <None Include="mechanica_arduino.ino.with_bootloader.standard.hex" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.mechanica_arduino.vsarduino.h">
