@@ -30,39 +30,20 @@ namespace Mechanica
             InitializeComponent();
         }
 
-        public const ArduinoModel Arduino = ArduinoModel.UnoR3;
 
 
         //desired distance LA should travel too
         public int desired_distance;
 
-        public int la_rest = 7;
 
 
-        //Arduino Pin Setup for LA
-        private const int EnablePin = 8;
-        private const int PWMPin = 11;
-        private const int PWMPin2 = 3;
 
-
-        //Analog In Pin for Loadcell sensor
-        private const int loadcell_pin = 0;
 
 
         //Dump int for incoming load cell sensor data
         public int loadcell_data;
 
 
-        //Analog in Pin for LVDT sensor
-        private const int lvdt_pin = 1;
-
-        //Dump int for incoming lvdt sensor data
-        public int lvdt_data;
-
-
-        //control system bools
-        public bool move_bool = false;
-        public bool retract_bool = false;
 
 
 
@@ -71,103 +52,13 @@ namespace Mechanica
         {
             Int32.TryParse(input_distance_inp.Text, out desired_distance);
 
-            move_bool = true;
-
-            Thread oThread = new Thread(new ThreadStart(data_extract));
-            oThread.Start();
-
 
         }
-        /// <summary>
-        /// Move to distance control schema and collects data
-        /// </summary>
-        private void data_extract()
-        {
-
-            using (var driver = new ArduinoDriver.ArduinoDriver(Arduino, true))
-            {
-                driver.Send(new PinModeRequest(EnablePin, PinMode.Output));
-                driver.Send(new PinModeRequest(PWMPin, PinMode.Output));
-                driver.Send(new PinModeRequest(PWMPin2, PinMode.Output));
 
 
-                //While Loop for move to distance control system
-                while (true)
-                {
+                    //append_loadcell_box(loadcell_recieve.PinValue.ToString());
 
-                    //driver.Send(new DigitalWriteRequest(EnablePin, DigitalValue.High));
-
-                    //driver.Send(new AnalogWriteRequest(PWMPin2, 0));
-                    //driver.Send(new AnalogWriteRequest(PWMPin, 255));
-                    var loadcell_recieve = driver.Send(new AnalogReadRequest(0));
-                    append_loadcell_box(loadcell_recieve.PinValue.ToString());
-
-                    //comment
-                    
-
-                    //Move to distance loop
-                    if (move_bool == true)
-                    {
-
-                        retract_bool = false;
-
-                        var lvdt_recieve = driver.Send(new AnalogReadRequest(1));
-                        append_lvdt_box(lvdt_recieve.PinValue.ToString());
-
-
-                        if (desired_distance > lvdt_recieve.PinValue)
-                        {
-                            driver.Send(new DigitalWriteRequest(EnablePin, DigitalValue.High));
-                            driver.Send(new AnalogWriteRequest(PWMPin2, 0));
-                            driver.Send(new AnalogWriteRequest(PWMPin, 255));
-                            move_bool = true;
-                            lvdt_recieve = driver.Send(new AnalogReadRequest(1));
-                        }
-                        else if (desired_distance <= lvdt_recieve.PinValue)
-                        {
-                            move_bool = false;
-                        }
-                    }
-                    else
-                    {
-                        retract_bool = true;
-                    }
-
-
-                    //Retract distance loop
-                    if (retract_bool == true)
-                    {
-                        move_bool = false;
-                        var lvdt_recieve = driver.Send(new AnalogReadRequest(1));
-                        append_lvdt_box(lvdt_recieve.PinValue.ToString());
-                        if (la_rest <= lvdt_recieve.PinValue)
-                        {
-
-                            driver.Send(new DigitalWriteRequest(EnablePin, DigitalValue.High));
-                            driver.Send(new AnalogWriteRequest(PWMPin2, 255));
-                            driver.Send(new AnalogWriteRequest(PWMPin, 0));
-
-                             lvdt_recieve = driver.Send(new AnalogReadRequest(1));
-                            append_lvdt_box(lvdt_recieve.PinValue.ToString());
-
-
-                        }
-                        else if (la_rest >= lvdt_recieve.PinValue)
-                        {
-                            //Thread.CurrentThread.Abort();
-                            lvdt_recieve = driver.Send(new AnalogReadRequest(1));
-                            append_lvdt_box(lvdt_recieve.PinValue.ToString());
-                        }
-                        driver.Dispose();
-                        Thread.CurrentThread.Abort();
-                    }
-
-                    //Thread.Sleep(1000);
-
-                }
-            }
-
-        }
+                
 
 
         public void append_loadcell_box(string value)
