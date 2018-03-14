@@ -39,6 +39,69 @@ bool retract_bool = false;
 long time = 0;
 int interval = 100; //ms
 
+
+String command = "0";
+boolean newData = false;
+const byte numChars = 3;
+char recievedChars[numChars];
+
+double update_position()
+{
+	long newPos;
+	newPos = mag_sensor.read();
+	double pos = (newPos / 1024.0) * (2.0);
+
+	return pos;
+}
+
+int read_loadcell()
+{
+	int analog_val = analogRead(0);
+	return analog_val;
+}
+
+void recieve_commands()
+{
+	static boolean recvInProgress = false;
+	static byte ndx = 0;
+	char rc;
+	char endMarker = '>';
+	char startMaker = '<';
+	while (Serial.available() > 0 && newData == false)
+	{
+		rc = Serial.read();
+		if (recvInProgress == true)
+		{
+			if (rc != endMarker)
+			{
+				recievedChars[ndx] = rc;
+				ndx++;
+				if (ndx >= numChars)
+				{
+					ndx = numChars - 1;
+				}
+			}
+			else
+			{
+				recievedChars[ndx] = '\0'; //termiante the string
+				recvInProgress = false;
+				ndx = 0;
+				newData = true;
+			}
+		}
+		else if (rc == startMaker)
+		{
+			recvInProgress = true;
+		}
+
+	}
+}
+
+void parseCommands()
+{
+	command = recievedChars;
+}
+
 void setup() {
 	Serial.begin(115200);
 	pinMode(chip_select, OUTPUT);
@@ -49,7 +112,7 @@ void setup() {
 	digitalWrite(chip_select, HIGH);
 
 
-	retract();
+	//retract();
 
 	//setTime(0);
 
@@ -57,51 +120,72 @@ void setup() {
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	//magnetic sensor
-	long newPos;
-	newPos = mag_sensor.read();
 
-
-	double pos = (newPos / 1024.0) * 2.0;
-	long pos_time = millis();
-
-
-	if (control_bool == false)
+	recieve_commands();
+	if (newData == true)
 	{
-		if (desired_position > pos)
-		{
-			motor.Rev(150);
-		}
-		else if (desired_position <= pos)
-		{
-			control_bool = true;
-		}
+		parseCommands();
+		newData = false;
 	}
-	else if (control_bool == true)
+
+	if (command == "1")
+	{
+		retract();
+		command = "0";
+	}
+	else if (command == "2")
+	{
+		double pos = update_position();
+		// Will have to fix this at some point
+		long pos_time = millis();
+
+
+		if (control_bool == false)
+		{
+			if (desired_position > pos)
+			{
+				motor.Rev(150);
+			}
+			else if (desired_position <= pos)
+			{
+				control_bool = true;
+			}
+		}
+		else if (control_bool == true)
+		{
+			motor.Stop();
+			command = "0";
+		}
+
+		if (millis() > time + interval)
+		{
+			int analog_val = read_loadcell();
+
+			time = millis();
+
+			Serial.print(pos);
+			Serial.print(",");
+			Serial.print(pos_time);
+			Serial.print(",");
+			Serial.print(analog_val);
+			Serial.print(",");
+			Serial.print(time);
+			Serial.println();
+
+
+
+		}
+
+
+	}
+	else if (command == "0")
 	{
 		motor.Stop();
 	}
 
-	if (millis() > time + interval)
-	{
-		int analog_val = analogRead(0);
-
-		//Serial.print("Position (mm): ");
-		//Serial.println(pos);
-		time = millis();
-
-		Serial.print(pos);
-		Serial.print(",");
-		Serial.print(pos_time);
-		Serial.print(",");
-		Serial.print(analog_val);
-		Serial.print(",");
-		Serial.print(time);
-		Serial.println();
 
 
-
-	}
+	
 
 
 
@@ -116,6 +200,7 @@ void retract()
 
 	motor.Stop();
 	mag_sensor.write(0);
+	Serial.print("ready");
 }
 
 
