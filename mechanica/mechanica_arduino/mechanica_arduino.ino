@@ -113,7 +113,7 @@ void setup() {
 
 
 	//retract();
-
+	Serial.println("ready");
 	//setTime(0);
 
 }
@@ -181,6 +181,7 @@ void loop() {
 	else if (command == "0")
 	{
 		motor.Stop();
+		Serial.println("done");
 	}
 
 
@@ -200,7 +201,7 @@ void retract()
 
 	motor.Stop();
 	mag_sensor.write(0);
-	Serial.print("ready");
+	Serial.println("begin");
 }
 
 
