@@ -31,19 +31,22 @@ float loadA = 0;
 
 
 
-double desired_position = 70.00;
 
-bool control_bool = false;
+
+bool control_bool = true;
 bool retract_bool = false;
 
 long time = 0;
 int interval = 100; //ms
-
-
+String incoming_string = "";
+double desired_position = 00.00;
 String command = "0";
 boolean newData = false;
-const byte numChars = 3;
+boolean newData_desired = false;
+const byte numChars = 32;
+const byte numChars_desired = 32;
 char recievedChars[numChars];
+char recievedDesiredChars[numChars_desired];
 
 double update_position()
 {
@@ -97,10 +100,12 @@ void recieve_commands()
 	}
 }
 
+
 void parseCommands()
 {
 	command = recievedChars;
 }
+
 
 void setup() {
 	Serial.begin(115200);
@@ -149,39 +154,60 @@ void loop() {
 			else if (desired_position <= pos)
 			{
 				control_bool = true;
+				newData_desired = false;
+				desired_position = 00.00;
+				motor.Stop();
+				command = "0";
+			}
+
+
+			if (millis() > time + interval)
+			{
+				int analog_val = read_loadcell();
+
+				time = millis();
+
+				Serial.print(pos);
+				Serial.print(",");
+				Serial.print(pos_time);
+				Serial.print(",");
+				Serial.print(analog_val);
+				Serial.print(",");
+				Serial.print(time);
+				Serial.println();
+
+
+
 			}
 		}
 		else if (control_bool == true)
 		{
-			motor.Stop();
-			command = "0";
-		}
 
-		if (millis() > time + interval)
-		{
-			int analog_val = read_loadcell();
+			Serial.println("give");
+			//while (!Serial.available()) ;
+			while (Serial.available() == 0)
+			{
+				desired_position = Serial.parseFloat();
+				//Serial.println("lol");
+				//Serial.println(desired_position);
+				control_bool = false;
+				newData_desired = true;
 
-			time = millis();
+				//empty buffer
+				//Serial.flush();
+	
 
-			Serial.print(pos);
-			Serial.print(",");
-			Serial.print(pos_time);
-			Serial.print(",");
-			Serial.print(analog_val);
-			Serial.print(",");
-			Serial.print(time);
-			Serial.println();
-
-
+			}
 
 		}
+
+		
 
 
 	}
 	else if (command == "0")
 	{
 		motor.Stop();
-		Serial.println("done");
 	}
 
 
@@ -193,6 +219,7 @@ void loop() {
 
   
 }
+
 
 void retract()
 {
