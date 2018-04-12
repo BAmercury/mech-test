@@ -1,4 +1,4 @@
-
+#include <MegaMotoHB.h>
 
 float analog_val = 0;
 float analog_int = 0;
@@ -14,34 +14,60 @@ const float slope = 8.8319;
 long time = 0;
 int interval = 200; //in miliseconds
 
+int motor_enablepin = 8;
+int motor_pwm_pin = 11;
+int motor_pwm_pin2 = 5;
+MegaMotoHB motor(motor_pwm_pin, motor_pwm_pin2);
 
-
+boolean set_speed = true;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
   analog_int = analogRead(0);
   delay(10);
   analog_int = analogRead(0);
 
+  Serial.println("Zeroing Out");
 
+pinMode(10, OUTPUT);
   
   //initial to 0KG/Grav
   //analog_int = analogRead(0);
   //Serial.print(analog_int);
+  delay(10);
 
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  int analog_val = analogRead(0);
+
+
+  digitalWrite(10, HIGH);
+  delay(10);
+  digitalWrite(10, LOW);
+  delay(20);
+
+ //if (set_speed == true)
+ //{
+   //   motor.Fwd(150);
+ 
+ //set_speed = false;
+//}
+  
+  //motor.Fwd(150);
+
+  //Serial.println(analog_val);
   //calcGrams();
 
   //Serial.println(analog_val, DEC);
 
   if (millis() > time + interval)
   {
+
+    int analog_val = analogRead(0);
     Serial.print("load: ");
+    //analog_val = map(analog_val, analog_int, 2000, 0, 1000);
     Serial.println(analog_val);
     time = millis();
   }

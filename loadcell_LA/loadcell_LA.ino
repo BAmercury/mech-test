@@ -33,12 +33,12 @@ void setup() {
 void loop(){
  //string format: string 'up' or 'down'
 
- if (Serial.available() > 0) {
-  String command;
-  command = Serial.readString();
-  if (command.toInt() == 1) {
-    Serial.println(1);
-  }
+ //if (Serial.available() > 0) {
+ // String command;
+ // command = Serial.readString();
+ // if (command.toInt() == 1) {
+ //   Serial.println(1);
+ // }
 
 
   if (Serial.available() > 0) {

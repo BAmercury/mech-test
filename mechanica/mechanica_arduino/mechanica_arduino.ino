@@ -1,7 +1,8 @@
 /*
+
  Name:		mechanica_arduino.ino
  Created:	3/1/2018 1:13:50 PM
- Author:	Merc
+ Author:	Brian Amin
 */
 
 // the setup function runs once when you press reset or power the board
@@ -17,17 +18,16 @@ int loadcell_pin = 0;
 int motor_enablepin = 8;
 int motor_pwm_pin = 11;
 int motor_pwm_pin2 = 5;
-MegaMotoHB motor(motor_pwm_pin, motor_pwm_pin2, motor_enablepin);
+//MegaMotoHB motor(motor_pwm_pin, motor_pwm_pin2, motor_enablepin);
 
 
 //Magnetic Sensor
-Encoder mag_sensor(3, 2);
+Encoder mag_sensor(2, 3);
 
 
 // Load cell
-float analog_val = 0;
+//float analog_val = 0;
 float analog_int = 0;
-float loadA = 0;
 
 
 
@@ -37,7 +37,7 @@ bool control_bool = true;
 bool retract_bool = false;
 
 long time = 0;
-int interval = 100; //ms
+int interval = 500; //ms
 String incoming_string = "";
 double desired_position = 00.00;
 String command = "0";
@@ -57,10 +57,22 @@ double update_position()
 	return pos;
 }
 
-int read_loadcell()
+float read_loadcell()
 {
-	int analog_val = analogRead(0);
+	float analog_val = analogRead(0);
+
+	//analog_val = map(analog_val, analog_int, 2000, 0, 1000);
+
 	return analog_val;
+}
+
+
+void zero_loadcell()
+{
+  analog_int = analogRead(0);
+  delay(10);
+  analog_int = analogRead(0);
+
 }
 
 void recieve_commands()
@@ -141,15 +153,19 @@ void loop() {
 	else if (command == "2")
 	{
 		double pos = update_position();
+
 		// Will have to fix this at some point
 		long pos_time = millis();
+
+		float val = analogRead(0);
+		long load_time = millis();
 
 
 		if (control_bool == false)
 		{
 			if (desired_position > pos)
 			{
-				motor.Rev(150);
+				motor.Fwd(150);
 			}
 			else if (desired_position <= pos)
 			{
@@ -163,7 +179,8 @@ void loop() {
 
 			if (millis() > time + interval)
 			{
-				int analog_val = read_loadcell();
+
+        //val = map(val, analog_int, 2000, 0, 1000);
 
 				time = millis();
 
@@ -171,9 +188,9 @@ void loop() {
 				Serial.print(",");
 				Serial.print(pos_time);
 				Serial.print(",");
-				Serial.print(analog_val);
+				Serial.print(val);
 				Serial.print(",");
-				Serial.print(time);
+				Serial.print(load_time);
 				Serial.println();
 
 
@@ -223,11 +240,12 @@ void loop() {
 
 void retract()
 {
-	motor.Fwd(255);
+	motor.Rev(255);
 	delay(10000);
 
 	motor.Stop();
 	mag_sensor.write(0);
+    zero_loadcell();
 	Serial.println("begin");
 }
 
