@@ -6,8 +6,8 @@
 */
 
 // the setup function runs once when you press reset or power the board
-#include <MegaMotoHB.h>
 #include <Encoder.h>
+#include <SoftwareSerial.h>
 
 
 // Setup Pins
@@ -15,11 +15,6 @@ int chip_select = 4;
 int pinA = 2;
 int pinB = 3;
 int loadcell_pin = 0;
-int motor_enablepin = 8;
-int motor_pwm_pin = 11;
-int motor_pwm_pin2 = 5;
-//MegaMotoHB motor(motor_pwm_pin, motor_pwm_pin2, motor_enablepin);
-
 
 //Magnetic Sensor
 Encoder mag_sensor(2, 3);
@@ -47,6 +42,10 @@ const byte numChars = 32;
 const byte numChars_desired = 32;
 char recievedChars[numChars];
 char recievedDesiredChars[numChars_desired];
+
+// Set up Roboclaw serial object
+SoftwareSerial roboclaw(10, 11); //RX TX
+
 
 double update_position()
 {
@@ -120,6 +119,7 @@ void parseCommands()
 
 
 void setup() {
+	roboclaw.begin(38400);
 	Serial.begin(115200);
 	pinMode(chip_select, OUTPUT);
 
@@ -165,14 +165,14 @@ void loop() {
 		{
 			if (desired_position > pos)
 			{
-				motor.Fwd(150);
+				roboclaw.write(127);
 			}
 			else if (desired_position <= pos)
 			{
 				control_bool = true;
 				newData_desired = false;
 				desired_position = 00.00;
-				motor.Stop();
+				roboclaw.write(1);
 				command = "0";
 			}
 
@@ -224,7 +224,7 @@ void loop() {
 	}
 	else if (command == "0")
 	{
-		motor.Stop();
+		roboclaw.write(1);
 	}
 
 
@@ -240,10 +240,10 @@ void loop() {
 
 void retract()
 {
-	motor.Rev(255);
+	roboclaw.write(64);
 	delay(10000);
 
-	motor.Stop();
+	roboclaw.write(1);
 	mag_sensor.write(0);
     zero_loadcell();
 	Serial.println("begin");

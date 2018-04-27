@@ -1,4 +1,4 @@
-#include <MegaMotoHB.h>
+//#include <MegaMotoHB.h>
 
 float analog_val = 0;
 float analog_int = 0;
@@ -17,7 +17,6 @@ int interval = 200; //in miliseconds
 int motor_enablepin = 8;
 int motor_pwm_pin = 11;
 int motor_pwm_pin2 = 5;
-MegaMotoHB motor(motor_pwm_pin, motor_pwm_pin2);
 
 boolean set_speed = true;
 
@@ -29,12 +28,6 @@ void setup() {
   analog_int = analogRead(0);
 
   Serial.println("Zeroing Out");
-
-pinMode(10, OUTPUT);
-  
-  //initial to 0KG/Grav
-  //analog_int = analogRead(0);
-  //Serial.print(analog_int);
   delay(10);
 
 }

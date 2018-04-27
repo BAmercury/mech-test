@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\loadcell_LA\loadcell_LA.ino = ..\loadcell_LA\loadcell_LA.ino
 		mechanica.ino = mechanica.ino
 		..\mechtest_client\mechtest_client.ino = ..\mechtest_client\mechtest_client.ino
+		..\SimpleSerial.ino = ..\SimpleSerial.ino
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AS5311", "..\..\AS5311\AS5311\AS5311\AS5311.csproj", "{2D2BC706-D6E0-4532-BD65-5B3284D88ABC}"
