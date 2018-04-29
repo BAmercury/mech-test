@@ -37,11 +37,10 @@ namespace Mechanica
 
 
 
-
-
-
         //Dump int for incoming load cell sensor data
         public int loadcell_data;
+
+        public int displacement_data;
 
 
 
@@ -51,6 +50,8 @@ namespace Mechanica
         private void begin_test_btn_Click(object sender, RoutedEventArgs e)
         {
             Int32.TryParse(input_distance_inp.Text, out desired_distance);
+
+
 
 
         }
@@ -83,30 +84,6 @@ namespace Mechanica
             lvdt_data_rd.Text = value;
         }
 
-        private void manual_ctrl_btn_Click(object sender, RoutedEventArgs e)
-        {
-            input_distance_inp.Visibility = Visibility.Hidden;
-            input_distance_lbl.Visibility = Visibility.Hidden;
-            begin_test_btn.Visibility = Visibility.Hidden;
-            //lvdt_data_rd.Visibility = Visibility.Hidden;
-            //lvdt_data_lbl.Visibility = Visibility.Hidden;
-            //loadcell_data_rd.Visibility = Visibility.Hidden;
-            //loadcell_data_lbl.Visibility = Visibility.Hidden;
-
-
-            //up_control_btn.Visibility = Visibility.Visible;
-            //down_control_btn.Visibility = Visibility.Visible;
-
-            enable_mc = true;
-
-            Thread oThread = new Thread(new ThreadStart(manual_control));
-            oThread.Start();
-
-
-
-
-
-        }
 
 
     }

@@ -7,15 +7,13 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <TextBox x:Name="input_distance_inp" HorizontalAlignment="Left" Height="23" Margin="33,72,0,0" TextWrapping="Wrap" Text="Distance" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="input_distance_inp" HorizontalAlignment="Left" Height="23" Margin="33,72,0,0" TextWrapping="Wrap" Text="Displacement" VerticalAlignment="Top" Width="120"/>
         <TextBlock x:Name="input_distance_lbl" HorizontalAlignment="Left" Margin="33,56,0,0" TextWrapping="Wrap" Text="Desired Distance:" VerticalAlignment="Top"/>
         <Button x:Name="begin_test_btn" Content="Test Now" HorizontalAlignment="Left" Margin="158,72,0,0" VerticalAlignment="Top" Width="75" Click="begin_test_btn_Click"/>
-        <TextBlock x:Name="lvdt_data_rd" HorizontalAlignment="Left" Margin="272,72,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="105"/>
+        <!-- Readout  -->
+        <TextBlock x:Name="displacement_data_rd" HorizontalAlignment="Left" Margin="272,72,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="105"/>
         <TextBlock x:Name="loadcell_data_rd" HorizontalAlignment="Left" Margin="397,72,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="99"/>
-        <TextBlock x:Name="lvdt_data_lbl" HorizontalAlignment="Left" Margin="272,56,0,0" TextWrapping="Wrap" Text="LVDT Data:" VerticalAlignment="Top"/>
-        <TextBox x:Name="loadcell_data_lbl" HorizontalAlignment="Left" Margin="397,54,0,0" TextWrapping="Wrap" Text="Load Cell Data:" VerticalAlignment="Top" BorderBrush="{x:Null}"/>
-        <Button x:Name="up_control_btn" Content="Up" HorizontalAlignment="Left" Margin="204,221,0,0" VerticalAlignment="Top" Width="75" Height="22" Click="up_control_btn_Click" Visibility="Hidden"/>
-        <Button x:Name="down_control_btn" Content="Down" HorizontalAlignment="Left" Margin="204,257,0,0" VerticalAlignment="Top" Width="75" Click="down_control_btn_Click" Visibility="Hidden"/>
-
+        <TextBlock x:Name="displacement_data_lbl" HorizontalAlignment="Left" Margin="272,56,0,0" TextWrapping="Wrap" Text="Displacement:" VerticalAlignment="Top"/>
+        <TextBox x:Name="loadcell_data_lbl" HorizontalAlignment="Left" Margin="397,54,0,0" TextWrapping="Wrap" Text="Load:" VerticalAlignment="Top" BorderBrush="{x:Null}"/>
     </Grid>
 </Window>

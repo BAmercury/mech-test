@@ -21,11 +21,27 @@ Encoder mag_sensor(2, 3);
 
 
 // Load cell
-//float analog_val = 0;
-float analog_int = 0;
+long analog_int = 0;
 
 
 
+struct CommandMessage
+{
+	long DisplacementRate, Displacement;
+	long Reset;
+};
+CommandMessage command_message;
+
+struct FeedbackMessage
+{
+	long Load, Distance;
+
+};
+FeedbackMessage feedback_message;
+
+const unsigned int BUFFER_SIZE = 256;
+char message_buffer[BUFFER_SIZE];
+char feedback_buffer[BUFFER_SIZE];
 
 
 bool control_bool = true;
@@ -157,7 +173,7 @@ void loop() {
 		// Will have to fix this at some point
 		long pos_time = millis();
 
-		float val = analogRead(0);
+		long val = analogRead(0);
 		long load_time = millis();
 
 
@@ -205,14 +221,8 @@ void loop() {
 			while (Serial.available() == 0)
 			{
 				desired_position = Serial.parseFloat();
-				//Serial.println("lol");
-				//Serial.println(desired_position);
 				control_bool = false;
 				newData_desired = true;
-
-				//empty buffer
-				//Serial.flush();
-	
 
 			}
 
