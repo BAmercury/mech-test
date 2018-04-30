@@ -3,20 +3,35 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:Mechanica"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Mechanica" Height="350" Width="525">
     <Grid>
-        <TextBox x:Name="input_distance_inp" HorizontalAlignment="Left" Height="23" Margin="33,72,0,0" TextWrapping="Wrap" Text="Distance" VerticalAlignment="Top" Width="120"/>
-        <TextBlock x:Name="input_distance_lbl" HorizontalAlignment="Left" Margin="33,56,0,0" TextWrapping="Wrap" Text="Desired Distance:" VerticalAlignment="Top"/>
-        <Button x:Name="begin_test_btn" Content="Test Now" HorizontalAlignment="Left" Margin="158,72,0,0" VerticalAlignment="Top" Width="75" Click="begin_test_btn_Click"/>
-        <TextBlock x:Name="lvdt_data_rd" HorizontalAlignment="Left" Margin="272,72,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="105"/>
-        <TextBlock x:Name="loadcell_data_rd" HorizontalAlignment="Left" Margin="397,72,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="99"/>
-        <TextBlock x:Name="lvdt_data_lbl" HorizontalAlignment="Left" Margin="272,56,0,0" TextWrapping="Wrap" Text="LVDT Data:" VerticalAlignment="Top"/>
-        <TextBox x:Name="loadcell_data_lbl" HorizontalAlignment="Left" Margin="397,54,0,0" TextWrapping="Wrap" Text="Load Cell Data:" VerticalAlignment="Top" BorderBrush="{x:Null}"/>
-        <Button x:Name="manual_ctrl_btn" Content="Manual Control" HorizontalAlignment="Left" Margin="46,272,0,0" VerticalAlignment="Top" Width="116" Click="manual_ctrl_btn_Click"/>
-        <Button x:Name="up_control_btn" Content="Up" HorizontalAlignment="Left" Margin="204,221,0,0" VerticalAlignment="Top" Width="75" Height="22" Click="up_control_btn_Click" Visibility="Hidden"/>
-        <Button x:Name="down_control_btn" Content="Down" HorizontalAlignment="Left" Margin="204,257,0,0" VerticalAlignment="Top" Width="75" Click="down_control_btn_Click" Visibility="Hidden"/>
+
+        
+        
+        <!-- Basic Input for User -->
+        <TextBox x:Name="input_displacment_rate_inp" HorizontalAlignment="Left" Height="23" Margin="151,60,0,0" TextWrapping="Wrap" Text="Displacement Rate" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="input_displacement_inp" HorizontalAlignment="Left" Height="23" Margin="8,60,0,0" TextWrapping="Wrap" Text="Displacement" VerticalAlignment="Top" Width="120"/>
+        <!-- Basic Labels -->
+        <TextBlock x:Name="input_distance_lbl" HorizontalAlignment="Left" Margin="10,41,0,0" TextWrapping="Wrap" Text="Desired Displacement:" VerticalAlignment="Top"/>
+        <TextBlock x:Name="input_displacement_lbl" HorizontalAlignment="Left" Margin="151,44,0,0" TextWrapping="Wrap" Text="Desired Displacement Rate" VerticalAlignment="Top" />
+        <!--Buttons -->
+        <Button x:Name="begin_test_btn" Content="Test Now" HorizontalAlignment="Left" Margin="10,148,0,0" VerticalAlignment="Top" Width="75" Click="begin_test_btn_Click"/>
+        <Button x:Name="begin_reset_btn" Content="Reset" HorizontalAlignment="Left" Margin="100,148,0,0" VerticalAlignment="Top" Width="75" Click="retract_test_btn_Click"/>
+        <Button x:Name="write_file_btn" Content="Write File" HorizontalAlignment="Left" Margin="196,148,0,0" VerticalAlignment="Top" Width="75" Click="write_file_btn_Click"/>
+
+        <!-- Readout  -->
+        <TextBlock x:Name="displacement_data_rd" HorizontalAlignment="Left" Margin="272,120,0,0" TextWrapping="Wrap" Text="Displacement Readout" VerticalAlignment="Top" Width="105"/>
+        <TextBlock x:Name="loadcell_data_rd" HorizontalAlignment="Left" Margin="397,120,0,0" TextWrapping="Wrap" Text="Load Readout" VerticalAlignment="Top" Width="99"/>
+        <!--Basic Readout Data Labels-->
+        <TextBlock x:Name="displacement_data_lbl" HorizontalAlignment="Left" Margin="272,99,0,0" TextWrapping="Wrap" Text="Displacement:" VerticalAlignment="Top"/>
+        <TextBlock x:Name="loadcell_data_lbl" HorizontalAlignment="Left" Margin="397,98,0,0" TextWrapping="Wrap" Text="Load:" VerticalAlignment="Top" />
+
+        <!-- Arduino Connection Button and Readout-->
+        <Button x:Name="connect_btn" Content="Connect" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.525,0.35" Click="connect_btn_Click"/>
+        <TextBlock x:Name="connect_lbl" HorizontalAlignment="Left" Margin="100,12,0,0" TextWrapping="Wrap" Text="Not Connected" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
