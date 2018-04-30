@@ -88,6 +88,8 @@ void retract()
 	digitalWrite(13, LOW);
 	delay(1000);
 	got_commands = false;
+	Serial.print("go");
+	Serial.println();
 }
 
 void update_motors()

@@ -21,7 +21,16 @@ namespace Mechanica
 
         public string PortName = "COM9";
 
-        public bool test_ongoing = false;
+        public struct CommandPacket
+        {
+            public string RunTest;
+            public string DisplacementRate, Displacement;
+            public string Retract;
+        };
+
+        CommandPacket command_message;
+
+        public SerialPortStream MainPort = new SerialPortStream();
 
 
         public void Run_Uploader(string serialPortName, string FilePath)
@@ -64,93 +73,63 @@ namespace Mechanica
             return _serialPortName;
         }
 
-        public void Begin_Test(SerialPortStream port, double DisplacementRate, double Displacement)
+        public void Main_PortHandler(SerialPortStream port)
         {
+            string serialPortName = Find_Port_Name();
+            port.PortName = serialPortName;
+            port.BaudRate = 115200;
             port.Open();
+            append_connect_box("Connected!");
 
-            // Prompt device to see if it's ready
-            bool quick = true;
-            while (quick)
+
+        }
+
+        public void Begin_Test(CommandPacket commands, SerialPortStream port)
+        {
+            port.Write("<" + commands.RunTest + "," + commands.DisplacementRate + "," + commands.Displacement + "," + commands.Retract + ">");
+
+            bool test_in_progress = true;
+            while (test_in_progress)
             {
                 if (port.BytesToRead > 0)
                 {
                     string s = port.ReadLine();
-                    s = Regex.Replace(s, @"\r", string.Empty);
-                    // Add in a label to signify arduino is ready to recieve commands
-                    if (s == "ready")
+                    //s = Regex.Replace(s, @"\r", string.Empty);
+                    if (s == "done")
                     {
-                        quick = false;
-                        // Update labeel to show we ready
+                        test_in_progress = false;
                         break;
                     }
-                }
-            }
-
-            // Now Reset the system back to 0
-            quick = true;
-            port.Write("<1>");
-            while (quick)
-            {
-                if (port.BytesToRead > 0)
-                {
-                    string s = port.ReadLine();
-                    s = Regex.Replace(s, @"\r", string.Empty);
-                    if (s == "begin")
-                    {
-                        quick = false;
-                        // Signify the system is now reset
-                        break;
-                    }
-                }
-            }
-
-
-            // Now send your commands and let's start the test
-            quick = true;
-            port.Write("<2>");
-            while (quick)
-            {
-                if (port.BytesToRead > 0)
-                {
-                    string s = port.ReadLine();
-                    s = Regex.Replace(s, @"\r", string.Empty);
-
-                    if (s == "give")
-                    {
-                        port.WriteLine(DisplacementRate.ToString());
-                        //quick = false;
-                        //break;
-                    }
-                    if (s == "again")
-                    {
-                        port.WriteLine(Displacement.ToString());
-                        quick = false;
-                        break;
-                    }
-                }
-            }
-            test_ongoing = true;
-            while (test_ongoing)
-            {
-                if (port.BytesToRead > 0)
-                {
-                    string s = port.ReadLine();
                     string[] message = s.Split(',');
                     List<double> temp = new List<double>();
+                    //temp.Add(Convert.ToDouble(s));
                     foreach (string element in message)
                     {
+
+                        //Console.WriteLine(element);
+
                         double value = Convert.ToDouble(element);
                         temp.Add(value);
+                        Console.WriteLine(element);
+
                     }
                     data.Add(temp);
                 }
             }
-         
+
+            MessageBox.Show("Test Finished, Data ready to save","Mechanica",MessageBoxButton.OK, MessageBoxImage.Information);
+
+
         }
 
-        public void Write_File(List<List<double>> data)
+        public void Begin_Retract(CommandPacket commands, SerialPortStream port)
         {
-            using(TextWriter tw = new StreamWriter("List.csv"))
+
+        }
+
+        public void Write_File(List<List<double>> data, string file_path)
+        {
+            using(TextWriter tw = new StreamWriter(file_path))
             {
                 foreach (List<double> member in data)
                 {
@@ -163,6 +142,7 @@ namespace Mechanica
                 }
 
             }
+            MessageBox.Show("Wrote File", "Mechanica", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 

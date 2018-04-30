@@ -17,6 +17,7 @@ using ArduinoDriver.SerialProtocol;
 using ArduinoUploader.Hardware;
 using ArduinoUploader;
 using System.Threading;
+using Microsoft.Win32;
 
 namespace Mechanica
 {
@@ -49,18 +50,21 @@ namespace Mechanica
 
         private void begin_test_btn_Click(object sender, RoutedEventArgs e)
         {
-            Int32.TryParse(input_distance_inp.Text, out desired_distance);
+
+
+            command_message.Displacement = input_displacement_inp.Text;
+            command_message.DisplacementRate = input_displacment_rate_inp.Text;
+            command_message.RunTest = "1";
+            command_message.Retract = "0";
+            Begin_Test(command_message, MainPort);
+
+
+            
 
 
 
 
         }
-
-
-                    //append_loadcell_box(loadcell_recieve.PinValue.ToString());
-
-                
-
 
         public void append_loadcell_box(string value)
         {
@@ -73,18 +77,49 @@ namespace Mechanica
             loadcell_data_rd.Text = value;
         }
 
-        public void append_lvdt_box(string value)
+        public void append_distance_box(string value)
         {
             if (!Dispatcher.CheckAccess())
             {
-                Dispatcher.Invoke(new Action<string>(append_lvdt_box), new object[] {  value });
+                Dispatcher.Invoke(new Action<string>(append_distance_box), new object[] {  value });
                 return;
 
             }
-            lvdt_data_rd.Text = value;
+            displacement_data_rd.Text = value;
         }
 
+        public void append_connect_box(string value)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action<string>(append_connect_box), new object[] { value });
+                return;
+            }
+            connect_lbl.Text = value;
+        }
 
+        private void connect_btn_Click(object sender, RoutedEventArgs e)
+        {
+            Main_PortHandler(MainPort);
+        }
 
+        private void retract_test_btn_Click(object sender, RoutedEventArgs e)
+        {
+            command_message.Displacement = "0";
+            command_message.DisplacementRate = "0";
+            command_message.RunTest = "0";
+            command_message.Retract = "1";
+            Begin_Retract(command_message, MainPort);
+
+        }
+
+        private void write_file_btn_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "CSV file (*.csv)|*.csv";
+            saveFileDialog.ShowDialog();
+            Write_File(data, saveFileDialog.FileName);
+            
+        }
     }
 }
