@@ -39,7 +39,7 @@ CommandMessage command_message;
 
 struct FeedbackMessage
 {
-	double Distance;
+	int32_t Distance;
 	long DistTime, LoadTime, Load;
 
 };
@@ -97,6 +97,7 @@ void update_motors()
 	if (command_message.Reset == 1)
 	{
 		retract();
+		command_message.Reset = 0;
 	}
 
 	uint8_t speed = map(command_message.DisplacementRate, 0, 5, 64, 127);
@@ -134,6 +135,7 @@ void update_motors()
 			got_commands = false;
 			Serial.print("done");
 			Serial.println();
+			command_message.ControlBool = 0;
 		}
 
 
@@ -141,11 +143,11 @@ void update_motors()
 }
 
 
-double update_position()
+int32_t update_position()
 {
-	long newPos;
+	int32_t newPos;
 	newPos = mag_sensor.read();
-	double pos = (newPos / 1024.0) * (2.0);
+	int32_t pos = (newPos / 1024.0) * (2.0);
 
 	return pos;
 }

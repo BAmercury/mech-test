@@ -18,6 +18,8 @@ using ArduinoUploader.Hardware;
 using ArduinoUploader;
 using System.Threading;
 using Microsoft.Win32;
+using LiveCharts;
+using LiveCharts.Defaults;
 
 namespace Mechanica
 {
@@ -29,6 +31,8 @@ namespace Mechanica
         public MainWindow()
         {
             InitializeComponent();
+            //ValuesA = new LiveCharts.ChartValues<ObservablePoint>();
+            //ValuesB = new LiveCharts.ChartValues<ObservablePoint>();
         }
 
 
@@ -44,9 +48,10 @@ namespace Mechanica
         public int displacement_data;
 
 
+        public delegate void UpdateLoadCallback(string value);
+        public delegate void UpdateDisplacementCallback(string value);
 
-
-
+       
 
         private void begin_test_btn_Click(object sender, RoutedEventArgs e)
         {
@@ -56,10 +61,10 @@ namespace Mechanica
             command_message.DisplacementRate = input_displacment_rate_inp.Text;
             command_message.RunTest = "1";
             command_message.Retract = "0";
-            Begin_Test(command_message, MainPort);
+            Task.Factory.StartNew(() => Begin_Test(command_message, MainPort));
 
 
-            
+
 
 
 
@@ -72,8 +77,10 @@ namespace Mechanica
             if (!Dispatcher.CheckAccess())
             {
                 Dispatcher.Invoke(new Action<string>(append_loadcell_box), new object[] { value });
+                Console.WriteLine("Busy");
                 return;
             }
+            Console.WriteLine(value);
             loadcell_data_rd.Text = value;
         }
 
@@ -81,9 +88,8 @@ namespace Mechanica
         {
             if (!Dispatcher.CheckAccess())
             {
-                Dispatcher.Invoke(new Action<string>(append_distance_box), new object[] {  value });
+                Dispatcher.Invoke(new Action<string>(append_distance_box), new object[] { value });
                 return;
-
             }
             displacement_data_rd.Text = value;
         }
@@ -109,7 +115,9 @@ namespace Mechanica
             command_message.DisplacementRate = "0";
             command_message.RunTest = "0";
             command_message.Retract = "1";
-            Begin_Retract(command_message, MainPort);
+            Task.Factory.StartNew(() => Begin_Retract(command_message, MainPort));
+
+            //Begin_Retract(command_message, MainPort);
 
         }
 

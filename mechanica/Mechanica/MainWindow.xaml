@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:Mechanica"
         mc:Ignorable="d"
         Title="Mechanica" Height="350" Width="525">
@@ -22,8 +23,8 @@
         <Button x:Name="write_file_btn" Content="Write File" HorizontalAlignment="Left" Margin="196,148,0,0" VerticalAlignment="Top" Width="75" Click="write_file_btn_Click"/>
 
         <!-- Readout  -->
-        <TextBlock x:Name="displacement_data_rd" HorizontalAlignment="Left" Margin="272,120,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="105"/>
-        <TextBlock x:Name="loadcell_data_rd" HorizontalAlignment="Left" Margin="397,120,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="99"/>
+        <TextBlock x:Name="displacement_data_rd" HorizontalAlignment="Left" Margin="272,120,0,0" TextWrapping="Wrap" Text="Displacement Readout" VerticalAlignment="Top" Width="105"/>
+        <TextBlock x:Name="loadcell_data_rd" HorizontalAlignment="Left" Margin="397,120,0,0" TextWrapping="Wrap" Text="Load Readout" VerticalAlignment="Top" Width="99"/>
         <!--Basic Readout Data Labels-->
         <TextBlock x:Name="displacement_data_lbl" HorizontalAlignment="Left" Margin="272,99,0,0" TextWrapping="Wrap" Text="Displacement:" VerticalAlignment="Top"/>
         <TextBlock x:Name="loadcell_data_lbl" HorizontalAlignment="Left" Margin="397,98,0,0" TextWrapping="Wrap" Text="Load:" VerticalAlignment="Top" />
