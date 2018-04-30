@@ -9,6 +9,16 @@
 #include <Encoder.h>
 #include <SoftwareSerial.h>
 
+// Color Code:
+// POWR = RED
+// CSN = BLUE
+// CLK = GREEN
+// DO = YELLOW
+// PWM = ORANGE
+// B = BROWN
+// A = PURPLE
+// GND = BLACk
+
 
 // Setup Pins
 int chip_select = 4;
@@ -19,14 +29,9 @@ int loadcell_pin = 0;
 //Magnetic Sensor
 Encoder mag_sensor(2, 3);
 
-
-// Load cell
-long analog_int = 0;
-
-
-
 struct CommandMessage
 {
+	long ControlBool;
 	long DisplacementRate, Displacement;
 	long Reset;
 };
@@ -34,33 +39,104 @@ CommandMessage command_message;
 
 struct FeedbackMessage
 {
-	long Load, Distance;
+	double Distance;
+	long DistTime, LoadTime, Load;
 
 };
-FeedbackMessage feedback_message;
+
 
 const unsigned int BUFFER_SIZE = 256;
 char message_buffer[BUFFER_SIZE];
-char feedback_buffer[BUFFER_SIZE];
 
-
-bool control_bool = true;
-bool retract_bool = false;
 
 long time = 0;
-int interval = 500; //ms
-String incoming_string = "";
-double desired_position = 00.00;
-String command = "0";
-boolean newData = false;
-boolean newData_desired = false;
-const byte numChars = 32;
-const byte numChars_desired = 32;
-char recievedChars[numChars];
-char recievedDesiredChars[numChars_desired];
+int interval = 200; //ms
+
+bool got_commands = false;
 
 // Set up Roboclaw serial object
 SoftwareSerial roboclaw(10, 11); //RX TX
+
+void handle_message()
+{
+	char* last_token = strtok(message_buffer, "<");
+	char* next_token;
+
+	{
+		command_message.ControlBool = strtol(last_token, &next_token, 10);
+		last_token = next_token + 1;
+		command_message.DisplacementRate = strtol(last_token, &next_token, 10);
+		last_token = next_token + 1;
+		command_message.Displacement = strtol(last_token, &next_token, 10);
+		last_token = next_token + 1;
+		command_message.Reset = strtol(last_token, &next_token, 10);
+	}
+
+
+}
+
+
+void retract()
+{
+	roboclaw.write(1);
+	delay(10000);
+
+	roboclaw.write(64);
+	mag_sensor.write(0);
+	digitalWrite(13, HIGH);
+	delay(1000);
+	digitalWrite(13, LOW);
+	delay(1000);
+	got_commands = false;
+}
+
+void update_motors()
+{
+	if (command_message.Reset == 1)
+	{
+		retract();
+	}
+
+	uint8_t speed = map(command_message.DisplacementRate, 0, 5, 64, 127);
+
+	if (command_message.ControlBool == 1)
+	{
+		FeedbackMessage feedback;
+		feedback.Distance = update_position();
+		feedback.DistTime = millis();
+		if (command_message.Displacement > feedback.Distance)
+		{
+			roboclaw.write(speed);
+			got_commands = true;
+			feedback.Load = read_loadcell();
+			feedback.LoadTime = millis();
+			if (millis() > time + interval)
+			{
+				time = millis();
+				Serial.print(feedback.Distance);
+				Serial.print(",");
+				Serial.print(feedback.DistTime);
+				Serial.print(",");
+				Serial.print(feedback.Load);
+				Serial.print(",");
+				Serial.print(feedback.LoadTime);
+				Serial.println();
+
+
+
+			}
+		}
+		else if (command_message.Displacement <= feedback.Distance)
+		{
+			roboclaw.write(64);
+			got_commands = false;
+			Serial.print("done");
+			Serial.println();
+		}
+
+
+	}
+}
 
 
 double update_position()
@@ -72,9 +148,9 @@ double update_position()
 	return pos;
 }
 
-float read_loadcell()
+long read_loadcell()
 {
-	float analog_val = analogRead(0);
+	long analog_val = analogRead(0);
 
 	//analog_val = map(analog_val, analog_int, 2000, 0, 1000);
 
@@ -82,181 +158,45 @@ float read_loadcell()
 }
 
 
-void zero_loadcell()
-{
-  analog_int = analogRead(0);
-  delay(10);
-  analog_int = analogRead(0);
-
-}
-
-void recieve_commands()
-{
-	static boolean recvInProgress = false;
-	static byte ndx = 0;
-	char rc;
-	char endMarker = '>';
-	char startMaker = '<';
-	while (Serial.available() > 0 && newData == false)
-	{
-		rc = Serial.read();
-		if (recvInProgress == true)
-		{
-			if (rc != endMarker)
-			{
-				recievedChars[ndx] = rc;
-				ndx++;
-				if (ndx >= numChars)
-				{
-					ndx = numChars - 1;
-				}
-			}
-			else
-			{
-				recievedChars[ndx] = '\0'; //termiante the string
-				recvInProgress = false;
-				ndx = 0;
-				newData = true;
-			}
-		}
-		else if (rc == startMaker)
-		{
-			recvInProgress = true;
-		}
-
-	}
-}
-
-
-void parseCommands()
-{
-	command = recievedChars;
-}
 
 
 void setup() {
 	roboclaw.begin(38400);
 	Serial.begin(115200);
 	pinMode(chip_select, OUTPUT);
-
+	pinMode(13, OUTPUT);
+	digitalWrite(13, LOW);
 	digitalWrite(chip_select, LOW);
-
 	delay(50);
 	digitalWrite(chip_select, HIGH);
 
-
-	//retract();
 	Serial.println("ready");
-	//setTime(0);
 
 }
 
 // the loop function runs over and over again until power down or reset
 void loop() {
 
-	recieve_commands();
-	if (newData == true)
+	if (got_commands == false)
 	{
-		parseCommands();
-		newData = false;
-	}
-
-	if (command == "1")
-	{
-		retract();
-		command = "0";
-	}
-	else if (command == "2")
-	{
-		double pos = update_position();
-
-		// Will have to fix this at some point
-		long pos_time = millis();
-
-		long val = analogRead(0);
-		long load_time = millis();
-
-
-		if (control_bool == false)
+		if (Serial.available() > 0)
 		{
-			if (desired_position > pos)
+			unsigned int message_length = Serial.readBytesUntil('>', message_buffer, 256);
+			if (message_length > 0)
 			{
-				roboclaw.write(127);
-			}
-			else if (desired_position <= pos)
-			{
-				control_bool = true;
-				newData_desired = false;
-				desired_position = 00.00;
-				roboclaw.write(1);
-				command = "0";
-			}
-
-
-			if (millis() > time + interval)
-			{
-
-        //val = map(val, analog_int, 2000, 0, 1000);
-
-				time = millis();
-
-				Serial.print(pos);
-				Serial.print(",");
-				Serial.print(pos_time);
-				Serial.print(",");
-				Serial.print(val);
-				Serial.print(",");
-				Serial.print(load_time);
-				Serial.println();
-
-
-
+				message_buffer[message_length] = '\0';
+				handle_message();
 			}
 		}
-		else if (control_bool == true)
-		{
-
-			Serial.println("give");
-			//while (!Serial.available()) ;
-			while (Serial.available() == 0)
-			{
-				desired_position = Serial.parseFloat();
-				control_bool = false;
-				newData_desired = true;
-
-			}
-
-		}
-
-		
 
 
 	}
-	else if (command == "0")
-	{
-		roboclaw.write(1);
-	}
 
+	update_motors();
 
-
-	
-
-
-
-
-  
 }
 
 
-void retract()
-{
-	roboclaw.write(64);
-	delay(10000);
 
-	roboclaw.write(1);
-	mag_sensor.write(0);
-    zero_loadcell();
-	Serial.println("begin");
-}
 
 
