@@ -140,6 +140,24 @@ void update_motors()
 
 
 	}
+
+
+	// Manual Control
+	if (command_message.ControlBool == 3)
+	{
+		if (command_message.Displacement == 1)
+		{
+			roboclaw.write(speed);
+		}
+		else if (command_message.Displacement == 3)
+		{
+			roboclaw.write(15);
+		}
+		else if (command_message.Displacement == 0)
+		{
+			roboclaw.write(64);
+		}
+	}
 }
 
 

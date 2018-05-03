@@ -7,31 +7,70 @@
         xmlns:local="clr-namespace:Mechanica"
         mc:Ignorable="d"
         Title="Mechanica" Height="350" Width="525">
-    <Grid>
+    <TabControl x:Name="tab_controller">
+        <!-- Tab to prompt user to connect to hardware, and some general information to log in a text box -->
+        <TabItem x:Name="connection_tab" Header="Start">
+            <Grid>
+                <!-- Arduino Connection Button and Readout-->
+                <Button x:Name="connect_btn" Content="Connect" HorizontalAlignment="Left" Margin="26,60,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.525,0.35" Click="connect_btn_Click"/>
+                <TextBlock x:Name="connect_lbl" HorizontalAlignment="Left" Margin="123,62,0,0" TextWrapping="Wrap" Text="Not Connected" VerticalAlignment="Top"/>
+                <TextBlock x:Name="connect_info" Text="Push the button to connect to hardware:" HorizontalAlignment="Left" Margin="26,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                <TextBox  x:Name="user_lab_info" HorizontalAlignment="Left" Height="140" Margin="36,118,0,0" TextWrapping="Wrap" Text="Experiment Details Can Go Here" VerticalAlignment="Top" Width="237"/>
+                <Button  x:Name="move_to_test" Content="Next" HorizontalAlignment="Left" Margin="198,258,0,0" VerticalAlignment="Top" Width="75" Click="move_to_test_Click"/>
 
+            </Grid>
+        </TabItem>
         
+        <!-- Tab to prompt user for fine control input -->
+        <TabItem x:Name="finecontrol_tab" Header="Fine Control">
+            <Grid>
+                <TextBlock x:Name="finecontrol_info" Text="Use the Z and X keys to move the platform up and down. Click the button to end fine control" HorizontalAlignment="Left" Margin="25,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                <Button x:Name="move_to_input" Content="Next" HorizontalAlignment="Left" Margin="25,87,0,0" VerticalAlignment="Top" Width="75" Click="move_to_input_Click"/>
+
+
+
+
+            </Grid>
+            
+        </TabItem>
         
-        <!-- Basic Input for User -->
-        <TextBox x:Name="input_displacment_rate_inp" HorizontalAlignment="Left" Height="23" Margin="151,60,0,0" TextWrapping="Wrap" Text="Displacement Rate" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="input_displacement_inp" HorizontalAlignment="Left" Height="23" Margin="8,60,0,0" TextWrapping="Wrap" Text="Displacement" VerticalAlignment="Top" Width="120"/>
-        <!-- Basic Labels -->
-        <TextBlock x:Name="input_distance_lbl" HorizontalAlignment="Left" Margin="10,41,0,0" TextWrapping="Wrap" Text="Desired Displacement:" VerticalAlignment="Top"/>
-        <TextBlock x:Name="input_displacement_lbl" HorizontalAlignment="Left" Margin="151,44,0,0" TextWrapping="Wrap" Text="Desired Displacement Rate" VerticalAlignment="Top" />
-        <!--Buttons -->
-        <Button x:Name="begin_test_btn" Content="Test Now" HorizontalAlignment="Left" Margin="10,148,0,0" VerticalAlignment="Top" Width="75" Click="begin_test_btn_Click"/>
-        <Button x:Name="begin_reset_btn" Content="Reset" HorizontalAlignment="Left" Margin="100,148,0,0" VerticalAlignment="Top" Width="75" Click="retract_test_btn_Click"/>
-        <Button x:Name="write_file_btn" Content="Write File" HorizontalAlignment="Left" Margin="196,148,0,0" VerticalAlignment="Top" Width="75" Click="write_file_btn_Click"/>
+        <!--Tab to prompt user for rate and displacement command inputs -->
+        <TabItem x:Name="input_tab" Header="Input">
+            <Grid>
+                <!-- Basic Input for User -->
+                <TextBox x:Name="input_displacment_rate_inp" HorizontalAlignment="Left" Height="23" Margin="151,60,0,0" TextWrapping="Wrap" Text="Displacement Rate" VerticalAlignment="Top" Width="120"/>
+                <TextBox x:Name="input_displacement_inp" HorizontalAlignment="Left" Height="23" Margin="8,60,0,0" TextWrapping="Wrap" Text="Displacement" VerticalAlignment="Top" Width="120"/>
+                <!-- Basic Labels -->
+                <TextBlock x:Name="input_distance_lbl" HorizontalAlignment="Left" Margin="10,41,0,0" TextWrapping="Wrap" Text="Desired Displacement:" VerticalAlignment="Top"/>
+                <TextBlock x:Name="input_displacement_lbl" HorizontalAlignment="Left" Margin="151,44,0,0" TextWrapping="Wrap" Text="Desired Displacement Rate" VerticalAlignment="Top" />
+                <!--Buttons -->
+                <Button x:Name="begin_test_btn" Content="Test Now" HorizontalAlignment="Left" Margin="10,148,0,0" VerticalAlignment="Top" Width="75" Click="begin_test_btn_Click"/>
+                <Button x:Name="begin_reset_btn" Content="Reset" HorizontalAlignment="Left" Margin="100,148,0,0" VerticalAlignment="Top" Width="75" Click="retract_test_btn_Click"/>
 
-        <!-- Readout  -->
-        <TextBlock x:Name="displacement_data_rd" HorizontalAlignment="Left" Margin="272,120,0,0" TextWrapping="Wrap" Text="Displacement Readout" VerticalAlignment="Top" Width="105"/>
-        <TextBlock x:Name="loadcell_data_rd" HorizontalAlignment="Left" Margin="397,120,0,0" TextWrapping="Wrap" Text="Load Readout" VerticalAlignment="Top" Width="99"/>
-        <!--Basic Readout Data Labels-->
-        <TextBlock x:Name="displacement_data_lbl" HorizontalAlignment="Left" Margin="272,99,0,0" TextWrapping="Wrap" Text="Displacement:" VerticalAlignment="Top"/>
-        <TextBlock x:Name="loadcell_data_lbl" HorizontalAlignment="Left" Margin="397,98,0,0" TextWrapping="Wrap" Text="Load:" VerticalAlignment="Top" />
+            </Grid>
+            
+        </TabItem>
+        
+        <!-- Tab to show user feedback data in graph format, as well as button to write data -->
+        <TabItem x:Name="display_tab" Header="Display">
+            <Grid>
+                <!-- Readout  -->
+                <TextBlock x:Name="displacement_data_rd" HorizontalAlignment="Left" Margin="272,42,0,0" TextWrapping="Wrap" Text="Displacement Readout" VerticalAlignment="Top" Width="105"/>
+                <TextBlock x:Name="loadcell_data_rd" HorizontalAlignment="Left" Margin="397,42,0,0" TextWrapping="Wrap" Text="Load Readout" VerticalAlignment="Top" Width="99"/>
+                <!--Basic Readout Data Labels-->
+                <TextBlock x:Name="displacement_data_lbl" HorizontalAlignment="Left" Margin="272,21,0,0" TextWrapping="Wrap" Text="Displacement:" VerticalAlignment="Top"/>
+                <TextBlock x:Name="loadcell_data_lbl" HorizontalAlignment="Left" Margin="397,21,0,0" TextWrapping="Wrap" Text="Load:" VerticalAlignment="Top" />
+                <Button x:Name="write_file_btn" Content="Write File" HorizontalAlignment="Left" Margin="24,248,0,0" VerticalAlignment="Top" Width="75" Click="write_file_btn_Click"/>
 
-        <!-- Arduino Connection Button and Readout-->
-        <Button x:Name="connect_btn" Content="Connect" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.525,0.35" Click="connect_btn_Click"/>
-        <TextBlock x:Name="connect_lbl" HorizontalAlignment="Left" Margin="100,12,0,0" TextWrapping="Wrap" Text="Not Connected" VerticalAlignment="Top"/>
+            </Grid>
+        </TabItem>
 
-    </Grid>
+
+
+
+       
+
+
+
+    </TabControl>
 </Window>

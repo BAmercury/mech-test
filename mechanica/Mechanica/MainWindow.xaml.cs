@@ -62,13 +62,6 @@ namespace Mechanica
             command_message.RunTest = "1";
             command_message.Retract = "0";
             Task.Factory.StartNew(() => Begin_Test(command_message, MainPort));
-
-
-
-
-
-
-
         }
 
         public void append_loadcell_box(string value)
@@ -116,9 +109,6 @@ namespace Mechanica
             command_message.RunTest = "0";
             command_message.Retract = "1";
             Task.Factory.StartNew(() => Begin_Retract(command_message, MainPort));
-
-            //Begin_Retract(command_message, MainPort);
-
         }
 
         private void write_file_btn_Click(object sender, RoutedEventArgs e)
@@ -128,6 +118,21 @@ namespace Mechanica
             saveFileDialog.ShowDialog();
             Write_File(data, saveFileDialog.FileName);
             
+        }
+
+        private void move_to_test_Click(object sender, RoutedEventArgs e)
+        {
+            tab_controller.SelectedValue = finecontrol_tab;
+            command_message.Displacement = "0";
+            command_message.DisplacementRate = "0";
+            command_message.RunTest = "3";
+            command_message.Retract = "0";
+            Task.Factory.StartNew(() => Begin_Manual(command_message, MainPort));
+        }
+
+        private void move_to_input_Click(object sender, RoutedEventArgs e)
+        {
+            enable_mc = false;
         }
     }
 }
