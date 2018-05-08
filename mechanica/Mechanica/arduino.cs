@@ -132,7 +132,6 @@ namespace Mechanica
 
 
                         List<double> temp = new List<double>();
-                        //temp.Add(Convert.ToDouble(s));
                         foreach (string element in message)
                         {
 
