@@ -92,6 +92,19 @@ void retract()
 	Serial.println();
 }
 
+void reset()
+{
+	mag_sensor.write(0);
+	digitalWrite(13, HIGH);
+	delay(1000);
+	digitalWrite(13, LOW);
+	delay(1000);
+	got_commands = false;
+	Serial.print("go");
+	Serial.println();
+
+}
+
 void update_motors()
 {
 	if (command_message.Reset == 1)
@@ -151,12 +164,30 @@ void update_motors()
 		}
 		else if (command_message.Displacement == 3)
 		{
-			roboclaw.write(15);
+			roboclaw.write(5);
 		}
 		else if (command_message.Displacement == 0)
 		{
 			roboclaw.write(64);
 		}
+		FeedbackMessage feedback;
+		feedback.Load = read_loadcell();
+		if (millis() > time + interval)
+		{
+			time = millis();
+			Serial.print(feedback.Load);
+			Serial.println();
+
+
+
+		}
+	}
+
+	if (command_message.ControlBool == 4)
+	{
+		reset();
+
+
 	}
 }
 

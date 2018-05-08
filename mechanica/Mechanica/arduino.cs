@@ -11,6 +11,8 @@ using ArduinoDriver.SerialProtocol;
 using ArduinoUploader.Hardware;
 using ArduinoUploader;
 using System.Text.RegularExpressions;
+using LiveCharts;
+using LiveCharts.Wpf;
 namespace Mechanica
 {
     public partial class MainWindow : Window
@@ -118,24 +120,27 @@ namespace Mechanica
                     string[] message = s.Split(',');
                     if (message.Length > 1)
                     {
-                        //Console.WriteLine(message[0]);
-                        //Console.WriteLine(message[2]);
+
                         string displacement = message[0];
                         string load = message[2];
                         append_distance_box(displacement);
-                        //append_distance_box(message[0]);
-                        append_loadcell_box(load);
-                       
+                        double number = Convert.ToDouble(s);
+                        number = ((number - 0) * (105.369 - 40.92)) / ((1023 - 0) + 40.92);
+                        append_loadcell_box(number.ToString());
+
+                        append_live_chart(number, Convert.ToDouble(displacement));
+
+
                         List<double> temp = new List<double>();
                         //temp.Add(Convert.ToDouble(s));
                         foreach (string element in message)
                         {
 
-                            //Console.WriteLine(element);
+
 
                             double value = Convert.ToDouble(element);
                             temp.Add(value);
-                            //Console.WriteLine(element);
+
 
                         }
                         data.Add(temp);
@@ -146,6 +151,30 @@ namespace Mechanica
 
             MessageBox.Show("Test Finished, Data ready to save","Mechanica",MessageBoxButton.OK, MessageBoxImage.Information);
 
+
+        }
+
+        public void Begin_Zero(CommandPacket commands, SerialPortStream port)
+        {
+            port.Write("<" + commands.RunTest + "," + commands.DisplacementRate + "," + commands.Displacement + "," + commands.Retract + ">");
+            bool reset_in_progress = true;
+            while (reset_in_progress)
+            {
+                if (port.BytesToRead > 0)
+                {
+                    string s = port.ReadLine();
+                    s = Regex.Replace(s, @"\r", string.Empty);
+                    if (s == "go")
+                    {
+                        reset_in_progress = false;
+                        break;
+                    }
+                }
+
+            }
+            //displacement_data_rd.Dispatcher.Invoke(new UpdateDisplacementCallback(this.append_distance_box), new object[] { "0"  });
+            //append_loadcell_box("0.00");
+            MessageBox.Show("Retract Finished, Ready to Test", "Mechanica", MessageBoxButton.OK, MessageBoxImage.Information);
 
         }
 

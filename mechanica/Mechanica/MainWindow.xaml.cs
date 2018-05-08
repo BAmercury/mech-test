@@ -19,7 +19,9 @@ using ArduinoUploader;
 using System.Threading;
 using Microsoft.Win32;
 using LiveCharts;
+using LiveCharts.Wpf;
 using LiveCharts.Defaults;
+using LiveCharts.Configurations;
 
 namespace Mechanica
 {
@@ -31,10 +33,24 @@ namespace Mechanica
         public MainWindow()
         {
             InitializeComponent();
-            //ValuesA = new LiveCharts.ChartValues<ObservablePoint>();
-            //ValuesB = new LiveCharts.ChartValues<ObservablePoint>();
-        }
 
+            var mapper = Mappers.Xy<MeasureModel>()
+                .X(model => model.displacement_plot)
+                .Y(model => model.load_plot);
+
+            // Let's save this map globally
+            Charting.For<MeasureModel>(mapper);
+
+            ChartValues = new ChartValues<MeasureModel>();
+
+            
+
+            
+            
+
+
+            DataContext = this;
+        }
 
 
         //desired distance LA should travel too
@@ -48,8 +64,8 @@ namespace Mechanica
         public int displacement_data;
 
 
-        public delegate void UpdateLoadCallback(string value);
-        public delegate void UpdateDisplacementCallback(string value);
+        //public delegate void UpdateLoadCallback(string value);
+        //public delegate void UpdateDisplacementCallback(string value);
 
        
 
@@ -97,6 +113,16 @@ namespace Mechanica
             connect_lbl.Text = value;
         }
 
+        public void append_load_finecontrol_box(string value)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action<string>(append_load_finecontrol_box), new object[] { value });
+                return;
+            }
+            load_finecontrol_lbl.Text = value;
+        }
+
         private void connect_btn_Click(object sender, RoutedEventArgs e)
         {
             Main_PortHandler(MainPort);
@@ -127,12 +153,28 @@ namespace Mechanica
             command_message.DisplacementRate = "0";
             command_message.RunTest = "3";
             command_message.Retract = "0";
-            Task.Factory.StartNew(() => Begin_Manual(command_message, MainPort));
+            enable_mc = true;
+            //Task.Factory.StartNew(() => Begin_Manual(command_message, MainPort));
         }
 
         private void move_to_input_Click(object sender, RoutedEventArgs e)
         {
             enable_mc = false;
+
+            tab_controller.SelectedValue = input_tab;
         }
+
+        private void zero_device_btn_Click(object sender, RoutedEventArgs e)
+        {
+            command_message.Displacement = "0";
+            command_message.DisplacementRate = "0";
+            command_message.RunTest = "4";
+            command_message.Retract = "0";
+            Task.Factory.StartNew(() => Begin_Zero(command_message, MainPort));
+
+
+        }
+
+
     }
 }

@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:Mechanica"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
         Title="Mechanica" Height="350" Width="525">
     <TabControl x:Name="tab_controller">
@@ -26,6 +26,7 @@
             <Grid>
                 <TextBlock x:Name="finecontrol_info" Text="Use the Z and X keys to move the platform up and down. Click the button to end fine control" HorizontalAlignment="Left" Margin="25,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
                 <Button x:Name="move_to_input" Content="Next" HorizontalAlignment="Left" Margin="25,87,0,0" VerticalAlignment="Top" Width="75" Click="move_to_input_Click"/>
+                <TextBlock x:Name="load_finecontrol_lbl"  HorizontalAlignment="Left" Margin="129,87,0,0" TextWrapping="Wrap" Text="Load" VerticalAlignment="Top"/>
 
 
 
@@ -38,14 +39,15 @@
         <TabItem x:Name="input_tab" Header="Input">
             <Grid>
                 <!-- Basic Input for User -->
-                <TextBox x:Name="input_displacment_rate_inp" HorizontalAlignment="Left" Height="23" Margin="151,60,0,0" TextWrapping="Wrap" Text="Displacement Rate" VerticalAlignment="Top" Width="120"/>
-                <TextBox x:Name="input_displacement_inp" HorizontalAlignment="Left" Height="23" Margin="8,60,0,0" TextWrapping="Wrap" Text="Displacement" VerticalAlignment="Top" Width="120"/>
+                <TextBox x:Name="input_displacment_rate_inp" HorizontalAlignment="Left" Height="23" Margin="259,44,0,0" TextWrapping="Wrap" Text="Displacement Rate" VerticalAlignment="Top" Width="120"/>
+                <TextBox x:Name="input_displacement_inp" HorizontalAlignment="Left" Height="23" Margin="70,52,0,0" TextWrapping="Wrap" Text="Displacement" VerticalAlignment="Top" Width="120"/>
                 <!-- Basic Labels -->
-                <TextBlock x:Name="input_distance_lbl" HorizontalAlignment="Left" Margin="10,41,0,0" TextWrapping="Wrap" Text="Desired Displacement:" VerticalAlignment="Top"/>
-                <TextBlock x:Name="input_displacement_lbl" HorizontalAlignment="Left" Margin="151,44,0,0" TextWrapping="Wrap" Text="Desired Displacement Rate" VerticalAlignment="Top" />
+                <TextBlock x:Name="input_distance_lbl" HorizontalAlignment="Left" Margin="70,31,0,0" TextWrapping="Wrap" Text="Desired Displacement (mm)" VerticalAlignment="Top"/>
+                <TextBlock x:Name="input_displacement_lbl" HorizontalAlignment="Left" Margin="259,28,0,0" TextWrapping="Wrap" Text="Desired Displacement Rate (mm/s)" VerticalAlignment="Top" />
                 <!--Buttons -->
-                <Button x:Name="begin_test_btn" Content="Test Now" HorizontalAlignment="Left" Margin="10,148,0,0" VerticalAlignment="Top" Width="75" Click="begin_test_btn_Click"/>
-                <Button x:Name="begin_reset_btn" Content="Reset" HorizontalAlignment="Left" Margin="100,148,0,0" VerticalAlignment="Top" Width="75" Click="retract_test_btn_Click"/>
+                <Button x:Name="begin_test_btn" Content="Test Now" HorizontalAlignment="Left" Margin="185,148,0,0" VerticalAlignment="Top" Width="75" Click="begin_test_btn_Click"/>
+                <Button x:Name="begin_reset_btn" Content="Reset" HorizontalAlignment="Left" Margin="275,148,0,0" VerticalAlignment="Top" Width="75" Click="retract_test_btn_Click"/>
+                <Button x:Name="zero_device_btn" Content="Zero" HorizontalAlignment="Left" Margin="86,148,0,0" VerticalAlignment="Top" Width="75" Click="zero_device_btn_Click"/>
 
             </Grid>
             
@@ -61,7 +63,28 @@
                 <TextBlock x:Name="displacement_data_lbl" HorizontalAlignment="Left" Margin="272,21,0,0" TextWrapping="Wrap" Text="Displacement:" VerticalAlignment="Top"/>
                 <TextBlock x:Name="loadcell_data_lbl" HorizontalAlignment="Left" Margin="397,21,0,0" TextWrapping="Wrap" Text="Load:" VerticalAlignment="Top" />
                 <Button x:Name="write_file_btn" Content="Write File" HorizontalAlignment="Left" Margin="24,248,0,0" VerticalAlignment="Top" Width="75" Click="write_file_btn_Click"/>
+                <Button x:Name="test_btn" Content="Test" HorizontalAlignment="Left" Margin="122,248,0,0" VerticalAlignment="Top" Width="75" Click="test_btn_Click"/>
 
+
+                <lvc:CartesianChart Margin="10,9,252,67" LegendLocation="Bottom">
+                    <lvc:CartesianChart.Series>
+                        <lvc:ScatterSeries Title="Series A" Values="{Binding ChartValues}" />
+                    </lvc:CartesianChart.Series>
+                    <lvc:CartesianChart.AxisY>
+                        <!--setting the axis unit improved the labels rounding rule-->
+                        <lvc:Axis Title="Force (N)">
+                            
+                            
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisY>
+
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Displacement (mm)">
+                            
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                    
+                </lvc:CartesianChart>
             </Grid>
         </TabItem>
 
