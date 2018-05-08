@@ -116,7 +116,7 @@ namespace Mechanica
                 if (Keyboard.IsKeyDown(Key.Z))
                 {
                     Console.WriteLine("Z");
-                    up_control = 1;
+                    //sup_control = 1;
                     CommandPacket commands;
                     commands.RunTest = "3";
                     commands.Displacement = "1";
@@ -133,10 +133,10 @@ namespace Mechanica
                     CommandPacket commands;
                     commands.RunTest = "3";
                     commands.Displacement = "3";
-                    commands.DisplacementRate = "2";
+                    commands.DisplacementRate = "4";
                     commands.Retract = "0";
                     MainPort.Write("<" + commands.RunTest + "," + commands.DisplacementRate + "," + commands.Displacement + "," + commands.Retract + ">");
-                    down_control = 1;
+                    //down_control = 1;
                 }
             }
         }
@@ -147,7 +147,7 @@ namespace Mechanica
 
             if (enable_mc == true)
             {
-                if (MainPort.BytesToRead >0)
+                if (MainPort.BytesToRead > 0)
                 {
                     string s = MainPort.ReadLine();
                     s = Regex.Replace(s, @"\r", string.Empty);

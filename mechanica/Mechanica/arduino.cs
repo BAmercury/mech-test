@@ -103,6 +103,8 @@ namespace Mechanica
 
         public void Begin_Test(CommandPacket commands, SerialPortStream port)
         {
+
+
             port.Write("<" + commands.RunTest + "," + commands.DisplacementRate + "," + commands.Displacement + "," + commands.Retract + ">");
 
             bool test_in_progress = true;
@@ -171,8 +173,7 @@ namespace Mechanica
                 }
 
             }
-            //displacement_data_rd.Dispatcher.Invoke(new UpdateDisplacementCallback(this.append_distance_box), new object[] { "0"  });
-            //append_loadcell_box("0.00");
+
             MessageBox.Show("Retract Finished, Ready to Test", "Mechanica", MessageBoxButton.OK, MessageBoxImage.Information);
 
         }
@@ -197,8 +198,7 @@ namespace Mechanica
                 }
 
             }
-            //displacement_data_rd.Dispatcher.Invoke(new UpdateDisplacementCallback(this.append_distance_box), new object[] { "0"  });
-            //append_loadcell_box("0.00");
+
             MessageBox.Show("Retract Finished, Ready to Test", "Mechanica", MessageBoxButton.OK, MessageBoxImage.Information);
 
 

@@ -52,26 +52,10 @@ namespace Mechanica
             DataContext = this;
         }
 
-
-        //desired distance LA should travel too
-        public int desired_distance;
-
-
-
-        //Dump int for incoming load cell sensor data
-        public int loadcell_data;
-
-        public int displacement_data;
-
-
-        //public delegate void UpdateLoadCallback(string value);
-        //public delegate void UpdateDisplacementCallback(string value);
-
-       
-
         private void begin_test_btn_Click(object sender, RoutedEventArgs e)
         {
 
+            tab_controller.SelectedValue = display_tab;
 
             command_message.Displacement = input_displacement_inp.Text;
             command_message.DisplacementRate = input_displacment_rate_inp.Text;

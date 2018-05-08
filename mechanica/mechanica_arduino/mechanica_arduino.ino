@@ -155,33 +155,33 @@ void update_motors()
 	}
 
 
-	// Manual Control
-	if (command_message.ControlBool == 3)
-	{
-		if (command_message.Displacement == 1)
-		{
-			roboclaw.write(speed);
-		}
-		else if (command_message.Displacement == 3)
-		{
-			roboclaw.write(5);
-		}
-		else if (command_message.Displacement == 0)
-		{
-			roboclaw.write(64);
-		}
-		FeedbackMessage feedback;
-		feedback.Load = read_loadcell();
-		if (millis() > time + interval)
-		{
-			time = millis();
-			Serial.print(feedback.Load);
-			Serial.println();
-
-
-
-		}
-	}
+//	// Manual Control
+//	if (command_message.ControlBool == 3)
+//	{
+//		if (command_message.Displacement == 1)
+//		{
+//			roboclaw.write(127);
+//		}
+//		else if (command_message.Displacement == 3)
+//		{
+//			roboclaw.write(1);
+//		}
+//		else if (command_message.Displacement == 0)
+//		{
+//			roboclaw.write(64);
+//		}
+//		FeedbackMessage feedback;
+//		feedback.Load = read_loadcell();
+//		if (millis() > time + interval)
+//		{
+//			time = millis();
+//			Serial.print(feedback.Load);
+//			Serial.println();
+//
+//
+//
+//		}
+//	}
 
 	if (command_message.ControlBool == 4)
 	{

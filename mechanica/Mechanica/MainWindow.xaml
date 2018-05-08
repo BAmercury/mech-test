@@ -58,18 +58,18 @@
         <TabItem x:Name="display_tab" Header="Display">
             <Grid>
                 <!-- Readout  -->
-                <TextBlock x:Name="displacement_data_rd" HorizontalAlignment="Left" Margin="272,42,0,0" TextWrapping="Wrap" Text="Displacement Readout" VerticalAlignment="Top" Width="105"/>
-                <TextBlock x:Name="loadcell_data_rd" HorizontalAlignment="Left" Margin="397,42,0,0" TextWrapping="Wrap" Text="Load Readout" VerticalAlignment="Top" Width="99"/>
+                <TextBlock x:Name="displacement_data_rd" HorizontalAlignment="Left" Margin="122,8,0,0" TextWrapping="Wrap" Text="Displacement Rd" VerticalAlignment="Top" Width="105"/>
+                <TextBlock x:Name="loadcell_data_rd" HorizontalAlignment="Left" Margin="291,8,0,0" TextWrapping="Wrap" Text="Load Rd" VerticalAlignment="Top" Width="99"/>
                 <!--Basic Readout Data Labels-->
-                <TextBlock x:Name="displacement_data_lbl" HorizontalAlignment="Left" Margin="272,21,0,0" TextWrapping="Wrap" Text="Displacement (mm)" VerticalAlignment="Top"/>
-                <TextBlock x:Name="loadcell_data_lbl" HorizontalAlignment="Left" Margin="397,21,0,0" TextWrapping="Wrap" Text="Load (N)" VerticalAlignment="Top" />
-                <Button x:Name="write_file_btn" Content="Write File" HorizontalAlignment="Left" Margin="24,248,0,0" VerticalAlignment="Top" Width="75" Click="write_file_btn_Click"/>
-                <Button x:Name="test_btn" Content="Test" HorizontalAlignment="Left" Margin="122,248,0,0" VerticalAlignment="Top" Width="75" Click="test_btn_Click"/>
+                <TextBlock x:Name="displacement_data_lbl" HorizontalAlignment="Left" Margin="10,8,0,0" TextWrapping="Wrap" Text="Displacement (mm)" VerticalAlignment="Top"/>
+                <TextBlock x:Name="loadcell_data_lbl" HorizontalAlignment="Left" Margin="227,8,0,0" TextWrapping="Wrap" Text="Load (N)" VerticalAlignment="Top" />
+                <Button x:Name="write_file_btn" Content="Write File" HorizontalAlignment="Left" Margin="421,7,0,0" VerticalAlignment="Top" Width="75" Click="write_file_btn_Click"/>
+                <Button x:Name="test_btn" Content="Test" HorizontalAlignment="Left" Margin="122,248,0,0" VerticalAlignment="Top" Width="75" Click="test_btn_Click" Visibility="Hidden"/>
 
 
-                <lvc:CartesianChart Margin="10,9,252,67" LegendLocation="Bottom">
+                <lvc:CartesianChart Margin="10,42,15,10" LegendLocation="Bottom">
                     <lvc:CartesianChart.Series>
-                        <lvc:ScatterSeries Title="Series A" Values="{Binding ChartValues}" />
+                        <lvc:ScatterSeries Title="Incoming Telemetry" Values="{Binding ChartValues}" />
                     </lvc:CartesianChart.Series>
                     <lvc:CartesianChart.AxisY>
                         <!--setting the axis unit improved the labels rounding rule-->
