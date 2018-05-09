@@ -36,10 +36,10 @@ void loop() {
   // put your main code here, to run repeatedly:
 
 
-  digitalWrite(10, HIGH);
-  delay(10);
-  digitalWrite(10, LOW);
-  delay(20);
+  //digitalWrite(10, HIGH);
+  //delay(10);
+  //digitalWrite(10, LOW);
+  //delay(20);
 
  //if (set_speed == true)
  //{

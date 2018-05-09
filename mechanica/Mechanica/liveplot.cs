@@ -29,16 +29,17 @@ namespace Mechanica
 
 
         public ChartValues<MeasureModel> ChartValues { get; set; }
+        public ChartValues<MeasureModel> DisplacementValues { get; set; }
 
         public double t1 = 0;
         public double t2 = 0;
 
-        public void append_live_chart(double load, double displacement)
+        public void append_live_chart(double load, double displacement, double distance, double time)
         {
 
             if (!Dispatcher.CheckAccess())
             {
-                Dispatcher.Invoke(new Action<double,double>(append_live_chart), new object[] { load, displacement });
+                Dispatcher.Invoke(new Action<double,double,double,double>(append_live_chart), new object[] { load, displacement,distance,time });
                 Console.WriteLine("Busy");
                 return;
             }
@@ -48,6 +49,13 @@ namespace Mechanica
                 load_plot = load,
                 displacement_plot = displacement
             });
+
+            DisplacementValues.Add(new MeasureModel
+            {
+                load_plot = distance,
+                displacement_plot = time
+            });
+
 
         }
 

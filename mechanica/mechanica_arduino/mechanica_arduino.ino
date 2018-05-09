@@ -50,9 +50,11 @@ char message_buffer[BUFFER_SIZE];
 
 
 long time = 0;
-int interval = 200; //ms
+long start_time = 0;
+int interval = 500; //ms // 2Hz
 
 bool got_commands = false;
+bool start_time_bool = true;
 
 // Set up Roboclaw serial object
 SoftwareSerial roboclaw(10, 11); //RX TX
@@ -117,15 +119,20 @@ void update_motors()
 
 	if (command_message.ControlBool == 1)
 	{
+		if (start_time_bool)
+		{
+			start_time = millis();
+			start_time_bool = false;
+		}
 		FeedbackMessage feedback;
 		feedback.Distance = update_position();
-		feedback.DistTime = millis();
+		feedback.DistTime = millis() - start_time;
 		if (command_message.Displacement > feedback.Distance)
 		{
 			roboclaw.write(speed);
 			got_commands = true;
 			feedback.Load = read_loadcell();
-			feedback.LoadTime = millis();
+			feedback.LoadTime = millis() - start_time;
 			if (millis() > time + interval)
 			{
 				time = millis();
@@ -146,6 +153,7 @@ void update_motors()
 		{
 			roboclaw.write(64);
 			got_commands = false;
+			start_time_bool = false;
 			Serial.print("done");
 			Serial.println();
 			command_message.ControlBool = 0;
@@ -155,33 +163,33 @@ void update_motors()
 	}
 
 
-//	// Manual Control
-//	if (command_message.ControlBool == 3)
-//	{
-//		if (command_message.Displacement == 1)
-//		{
-//			roboclaw.write(127);
-//		}
-//		else if (command_message.Displacement == 3)
-//		{
-//			roboclaw.write(1);
-//		}
-//		else if (command_message.Displacement == 0)
-//		{
-//			roboclaw.write(64);
-//		}
-//		FeedbackMessage feedback;
-//		feedback.Load = read_loadcell();
-//		if (millis() > time + interval)
-//		{
-//			time = millis();
-//			Serial.print(feedback.Load);
-//			Serial.println();
-//
-//
-//
-//		}
-//	}
+	// Manual Control
+	if (command_message.ControlBool == 3)
+	{
+		if (command_message.Displacement == 1)
+		{
+			roboclaw.write(127);
+		}
+		else if (command_message.Displacement == 3)
+		{
+			roboclaw.write(1);
+		}
+		else if (command_message.Displacement == 0)
+		{
+			roboclaw.write(64);
+		}
+		FeedbackMessage feedback;
+		feedback.Load = read_loadcell();
+		if (millis() > time + interval)
+		{
+			time = millis();
+			Serial.print(feedback.Load);
+			Serial.println();
+
+
+
+		}
+	}
 
 	if (command_message.ControlBool == 4)
 	{

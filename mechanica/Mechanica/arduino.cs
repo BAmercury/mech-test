@@ -124,13 +124,14 @@ namespace Mechanica
                     {
 
                         string displacement = message[0];
-                        string load = message[2];
+                        string load_str = message[2];
+                        string load_time_str = message[3];
                         append_distance_box(displacement);
-                        double number = Convert.ToDouble(s);
-                        number = ((number - 0) * (105.369 - 40.92)) / ((1023 - 0) + 40.92);
-                        append_loadcell_box(number.ToString());
+                        double load = Convert.ToDouble(load_str);
+                        //load = ((load - 0) * (105.369 - 40.92)) / ((1023 - 0) + 40.92);
+                        append_loadcell_box(load.ToString());
 
-                        append_live_chart(number, Convert.ToDouble(displacement));
+                        append_live_chart(load, Convert.ToDouble(load_time_str),Convert.ToDouble(displacement), Convert.ToDouble(message[1]));
 
 
                         List<double> temp = new List<double>();

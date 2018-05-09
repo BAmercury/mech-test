@@ -69,18 +69,20 @@
 
                 <lvc:CartesianChart Margin="10,42,15,10" LegendLocation="Bottom">
                     <lvc:CartesianChart.Series>
-                        <lvc:ScatterSeries Title="Incoming Telemetry" Values="{Binding ChartValues}" />
+                        <lvc:LineSeries Title="Load" Values="{Binding ChartValues}" ScalesYAt="1"/>
+                        <lvc:LineSeries Title="Displacement" Values="{Binding DisplacementValues}" ScalesYAt="0"/>
                     </lvc:CartesianChart.Series>
                     <lvc:CartesianChart.AxisY>
                         <!--setting the axis unit improved the labels rounding rule-->
-                        <lvc:Axis Title="Force (N)">
-                            
-                            
+                        <lvc:Axis Title="isplacement (mm)">
+                        </lvc:Axis>
+                        <lvc:Axis Title="Load (N)" Position="RightTop">
+                           
                         </lvc:Axis>
                     </lvc:CartesianChart.AxisY>
 
                     <lvc:CartesianChart.AxisX>
-                        <lvc:Axis Title="Displacement (mm)">
+                        <lvc:Axis Title="Time (ms)">
                             
                         </lvc:Axis>
                     </lvc:CartesianChart.AxisX>

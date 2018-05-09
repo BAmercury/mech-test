@@ -42,6 +42,7 @@ namespace Mechanica
             Charting.For<MeasureModel>(mapper);
 
             ChartValues = new ChartValues<MeasureModel>();
+            DisplacementValues = new ChartValues<MeasureModel>();
 
             
 
