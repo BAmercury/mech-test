@@ -32,7 +32,8 @@ Encoder mag_sensor(2, 3);
 struct CommandMessage
 {
 	long ControlBool;
-	long DisplacementRate, Displacement;
+	float DisplacementRate;
+	long Displacement;
 	long Reset;
 };
 CommandMessage command_message;
@@ -51,7 +52,7 @@ char message_buffer[BUFFER_SIZE];
 
 long time = 0;
 long start_time = 0;
-int interval = 500; //ms // 2Hz
+int interval = 50; //ms // 2Hz
 
 bool got_commands = false;
 bool start_time_bool = true;
@@ -67,7 +68,7 @@ void handle_message()
 	{
 		command_message.ControlBool = strtol(last_token, &next_token, 10);
 		last_token = next_token + 1;
-		command_message.DisplacementRate = strtol(last_token, &next_token, 10);
+		command_message.DisplacementRate = strtod(last_token, &next_token);
 		last_token = next_token + 1;
 		command_message.Displacement = strtol(last_token, &next_token, 10);
 		last_token = next_token + 1;
@@ -115,7 +116,7 @@ void update_motors()
 		command_message.Reset = 0;
 	}
 
-	uint8_t speed = map(command_message.DisplacementRate, 0, 5, 64, 127);
+	uint8_t speed = map(command_message.DisplacementRate*20, 0, 5*20, 64, 127);
 
 	if (command_message.ControlBool == 1)
 	{
@@ -204,7 +205,7 @@ int32_t update_position()
 {
 	int32_t newPos;
 	newPos = mag_sensor.read();
-	int32_t pos = (newPos / 1024.0) * (2.0);
+	int32_t pos = (newPos) * (2.0);
 
 	return pos;
 }
@@ -212,7 +213,8 @@ int32_t update_position()
 long read_loadcell()
 {
 	long analog_val = analogRead(0);
-
+	delayMicroseconds(10);
+	analog_val = analogRead(0);
 	//analog_val = map(analog_val, analog_int, 2000, 0, 1000);
 
 	return analog_val;
@@ -223,7 +225,7 @@ long read_loadcell()
 
 void setup() {
 	roboclaw.begin(38400);
-	Serial.begin(115200);
+	Serial.begin(250000);
 	pinMode(chip_select, OUTPUT);
 	pinMode(13, OUTPUT);
 	digitalWrite(13, LOW);

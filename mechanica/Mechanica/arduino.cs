@@ -79,7 +79,7 @@ namespace Mechanica
         {
             string serialPortName = Find_Port_Name();
             port.PortName = serialPortName;
-            port.BaudRate = 115200;
+            port.BaudRate = 250000;
             port.Open();
             bool connecting = true;
             while (connecting)
@@ -130,9 +130,9 @@ namespace Mechanica
                         double load = Convert.ToDouble(load_str);
                         //load = ((load - 0) * (105.369 - 40.92)) / ((1023 - 0) + 40.92);
                         append_loadcell_box(load.ToString());
-
-                        append_live_chart(load, Convert.ToDouble(load_time_str),Convert.ToDouble(displacement), Convert.ToDouble(message[1]));
-
+                    
+                        append_live_chart(load, Convert.ToDouble(load_time_str),Convert.ToDouble(displacement)/1024, Convert.ToDouble(message[1]));
+                    
 
                         List<double> temp = new List<double>();
                         foreach (string element in message)
@@ -150,6 +150,7 @@ namespace Mechanica
 
                 }
             }
+            
 
             MessageBox.Show("Test Finished, Data ready to save","Mechanica",MessageBoxButton.OK, MessageBoxImage.Information);
 

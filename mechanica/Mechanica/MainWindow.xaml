@@ -74,7 +74,7 @@
                     </lvc:CartesianChart.Series>
                     <lvc:CartesianChart.AxisY>
                         <!--setting the axis unit improved the labels rounding rule-->
-                        <lvc:Axis Title="isplacement (mm)">
+                        <lvc:Axis Title="Displacement (mm)">
                         </lvc:Axis>
                         <lvc:Axis Title="Load (N)" Position="RightTop">
                            

@@ -59,7 +59,7 @@ void loop() {
   {
 
     int analog_val = analogRead(0);
-    Serial.print("load: ");
+    //Serial.print("load: ");
     //analog_val = map(analog_val, analog_int, 2000, 0, 1000);
     Serial.println(analog_val);
     time = millis();

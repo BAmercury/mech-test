@@ -62,6 +62,7 @@ namespace Mechanica
             command_message.DisplacementRate = input_displacment_rate_inp.Text;
             command_message.RunTest = "1";
             command_message.Retract = "0";
+            
             Task.Factory.StartNew(() => Begin_Test(command_message, MainPort));
         }
 
