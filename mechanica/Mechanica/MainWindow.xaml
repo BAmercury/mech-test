@@ -4,19 +4,99 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Mechanica"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <TextBox x:Name="input_distance_inp" HorizontalAlignment="Left" Height="23" Margin="33,72,0,0" TextWrapping="Wrap" Text="Distance" VerticalAlignment="Top" Width="120"/>
-        <TextBlock x:Name="input_distance_lbl" HorizontalAlignment="Left" Margin="33,56,0,0" TextWrapping="Wrap" Text="Desired Distance:" VerticalAlignment="Top"/>
-        <Button x:Name="begin_test_btn" Content="Test Now" HorizontalAlignment="Left" Margin="158,72,0,0" VerticalAlignment="Top" Width="75" Click="begin_test_btn_Click"/>
-        <TextBlock x:Name="lvdt_data_rd" HorizontalAlignment="Left" Margin="272,72,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="105"/>
-        <TextBlock x:Name="loadcell_data_rd" HorizontalAlignment="Left" Margin="397,72,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="99"/>
-        <TextBlock x:Name="lvdt_data_lbl" HorizontalAlignment="Left" Margin="272,56,0,0" TextWrapping="Wrap" Text="LVDT Data:" VerticalAlignment="Top"/>
-        <TextBox x:Name="loadcell_data_lbl" HorizontalAlignment="Left" Margin="397,54,0,0" TextWrapping="Wrap" Text="Load Cell Data:" VerticalAlignment="Top" BorderBrush="{x:Null}"/>
-        <Button x:Name="manual_ctrl_btn" Content="Manual Control" HorizontalAlignment="Left" Margin="46,272,0,0" VerticalAlignment="Top" Width="116" Click="manual_ctrl_btn_Click"/>
-        <Button x:Name="up_control_btn" Content="Up" HorizontalAlignment="Left" Margin="204,221,0,0" VerticalAlignment="Top" Width="75" Height="22" Click="up_control_btn_Click" Visibility="Hidden"/>
-        <Button x:Name="down_control_btn" Content="Down" HorizontalAlignment="Left" Margin="204,257,0,0" VerticalAlignment="Top" Width="75" Click="down_control_btn_Click" Visibility="Hidden"/>
+        Title="Mechanica" Height="350" Width="525">
+    <TabControl x:Name="tab_controller">
+        <!-- Tab to prompt user to connect to hardware, and some general information to log in a text box -->
+        <TabItem x:Name="connection_tab" Header="Start">
+            <Grid>
+                <!-- Arduino Connection Button and Readout-->
+                <Button x:Name="connect_btn" Content="Connect" HorizontalAlignment="Left" Margin="26,60,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.525,0.35" Click="connect_btn_Click"/>
+                <TextBlock x:Name="connect_lbl" HorizontalAlignment="Left" Margin="123,62,0,0" TextWrapping="Wrap" Text="Not Connected" VerticalAlignment="Top"/>
+                <TextBlock x:Name="connect_info" Text="Push the button to connect to hardware:" HorizontalAlignment="Left" Margin="26,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                <TextBox  x:Name="user_lab_info" HorizontalAlignment="Left" Height="140" Margin="36,118,0,0" TextWrapping="Wrap" Text="Experiment Details Can Go Here" VerticalAlignment="Top" Width="237"/>
+                <Button  x:Name="move_to_test" Content="Next" HorizontalAlignment="Left" Margin="198,258,0,0" VerticalAlignment="Top" Width="75" Click="move_to_test_Click"/>
 
-    </Grid>
+            </Grid>
+        </TabItem>
+        
+        <!-- Tab to prompt user for fine control input -->
+        <TabItem x:Name="finecontrol_tab" Header="Fine Control">
+            <Grid>
+                <TextBlock x:Name="finecontrol_info" Text="Use the Z and X keys to move the platform up and down. Click the button to end fine control" HorizontalAlignment="Left" Margin="25,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                <Button x:Name="move_to_input" Content="Next" HorizontalAlignment="Left" Margin="25,87,0,0" VerticalAlignment="Top" Width="75" Click="move_to_input_Click"/>
+                <TextBlock x:Name="load_finecontrol_lbl"  HorizontalAlignment="Left" Margin="180,89,0,0" TextWrapping="Wrap" Text="Load" VerticalAlignment="Top"/>
+                <TextBlock x:Name="load_fine_control_txt" HorizontalAlignment="Left" Margin="180,74,0,0" TextWrapping="Wrap" Text="Load (N): " VerticalAlignment="Top"/>
+
+
+
+
+            </Grid>
+            
+        </TabItem>
+        
+        <!--Tab to prompt user for rate and displacement command inputs -->
+        <TabItem x:Name="input_tab" Header="Input">
+            <Grid>
+                <!-- Basic Input for User -->
+                <TextBox x:Name="input_displacment_rate_inp" HorizontalAlignment="Left" Height="23" Margin="259,44,0,0" TextWrapping="Wrap" Text="Displacement Rate" VerticalAlignment="Top" Width="120"/>
+                <TextBox x:Name="input_displacement_inp" HorizontalAlignment="Left" Height="23" Margin="70,52,0,0" TextWrapping="Wrap" Text="Displacement" VerticalAlignment="Top" Width="120"/>
+                <!-- Basic Labels -->
+                <TextBlock x:Name="input_distance_lbl" HorizontalAlignment="Left" Margin="70,31,0,0" TextWrapping="Wrap" Text="Desired Displacement (mm)" VerticalAlignment="Top"/>
+                <TextBlock x:Name="input_displacement_lbl" HorizontalAlignment="Left" Margin="259,28,0,0" TextWrapping="Wrap" Text="Desired Displacement Rate (mm/s)" VerticalAlignment="Top" />
+                <!--Buttons -->
+                <Button x:Name="begin_test_btn" Content="Test Now" HorizontalAlignment="Left" Margin="185,148,0,0" VerticalAlignment="Top" Width="75" Click="begin_test_btn_Click"/>
+                <Button x:Name="begin_reset_btn" Content="Reset" HorizontalAlignment="Left" Margin="275,148,0,0" VerticalAlignment="Top" Width="75" Click="retract_test_btn_Click"/>
+                <Button x:Name="zero_device_btn" Content="Zero" HorizontalAlignment="Left" Margin="86,148,0,0" VerticalAlignment="Top" Width="75" Click="zero_device_btn_Click"/>
+
+            </Grid>
+            
+        </TabItem>
+        
+        <!-- Tab to show user feedback data in graph format, as well as button to write data -->
+        <TabItem x:Name="display_tab" Header="Display">
+            <Grid>
+                <!-- Readout  -->
+                <TextBlock x:Name="displacement_data_rd" HorizontalAlignment="Left" Margin="122,8,0,0" TextWrapping="Wrap" Text="Displacement Rd" VerticalAlignment="Top" Width="105"/>
+                <TextBlock x:Name="loadcell_data_rd" HorizontalAlignment="Left" Margin="291,8,0,0" TextWrapping="Wrap" Text="Load Rd" VerticalAlignment="Top" Width="99"/>
+                <!--Basic Readout Data Labels-->
+                <TextBlock x:Name="displacement_data_lbl" HorizontalAlignment="Left" Margin="10,8,0,0" TextWrapping="Wrap" Text="Displacement (mm)" VerticalAlignment="Top"/>
+                <TextBlock x:Name="loadcell_data_lbl" HorizontalAlignment="Left" Margin="227,8,0,0" TextWrapping="Wrap" Text="Load (N)" VerticalAlignment="Top" />
+                <Button x:Name="write_file_btn" Content="Write File" HorizontalAlignment="Left" Margin="421,7,0,0" VerticalAlignment="Top" Width="75" Click="write_file_btn_Click"/>
+                <Button x:Name="test_btn" Content="Test" HorizontalAlignment="Left" Margin="122,248,0,0" VerticalAlignment="Top" Width="75" Click="test_btn_Click" Visibility="Hidden"/>
+
+
+                <lvc:CartesianChart Margin="10,42,15,10" LegendLocation="Bottom">
+                    <lvc:CartesianChart.Series>
+                        <lvc:LineSeries Title="Load" Values="{Binding ChartValues}" ScalesYAt="1"/>
+                        <lvc:LineSeries Title="Displacement" Values="{Binding DisplacementValues}" ScalesYAt="0"/>
+                    </lvc:CartesianChart.Series>
+                    <lvc:CartesianChart.AxisY>
+                        <!--setting the axis unit improved the labels rounding rule-->
+                        <lvc:Axis Title="Displacement (mm)">
+                        </lvc:Axis>
+                        <lvc:Axis Title="Load (N)" Position="RightTop">
+                           
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisY>
+
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Time (ms)">
+                            
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                    
+                </lvc:CartesianChart>
+            </Grid>
+        </TabItem>
+
+
+
+
+       
+
+
+
+    </TabControl>
 </Window>
